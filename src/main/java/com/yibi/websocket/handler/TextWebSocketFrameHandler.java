@@ -64,6 +64,7 @@ public class TextWebSocketFrameHandler extends
             switch (action) {
                 case "ping": {
                     pingBiz.ping(incoming, cmsgCode);
+                    baseBiz.sendMessage(incoming, resultObj);
                     break;
                 }
                 case "join": {
