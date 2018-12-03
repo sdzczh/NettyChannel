@@ -47,33 +47,17 @@ public class OKCoinServiceImpl implements WebSocketService {
                 JSONArray result = (JSONArray) json;
                 JSONObject resultObj = result.getJSONObject(0);
                 String channel = resultObj.getString("channel");
-                if (channel.contains("ok_sub_spot")) {
-                    log.info("收到okcoin服务器数据最新行情变化：" + resultObj.toJSONString());
+                if (channel.contains("depth")) {
+                    log.info("收到okcoin服务器数据最新深度变化：" + resultObj.toJSONString());
                     String[] strArr = channel.split("_");
-                    String orderCoinName = strArr[3].toUpperCase();
-                    Integer orderCoinType = CoinType.getCode(orderCoinName);
-                    Integer unitCoinType = CoinType.USDT.code();
-
                     JSONObject data = resultObj.getJSONObject("data");
-                    BigDecimal amount = data.getBigDecimal("vol");
-                    BigDecimal price = data.getBigDecimal("last");
-                    Long timestamp = data.getLong("timestamp");
-                    BigDecimal high = data.getBigDecimal("high");
-                    BigDecimal low = data.getBigDecimal("low");
-                    BigDecimal open = data.getBigDecimal("open");
-                    if (price == null) price = new BigDecimal(0);
-                    //计算涨跌幅
-                    BigDecimal chgPrice = price.subtract(open).divide(open, 5, RoundingMode.HALF_UP).multiply(new BigDecimal(100));
-                    Map<String, Object> params = new HashMap<String, Object>();
-                    params.put("orderCoinType", orderCoinType);
-                    params.put("unitCoinType", unitCoinType);
-                    params.put("chgPrice", chgPrice.setScale(2, RoundingMode.HALF_UP).doubleValue() + "");
+
                     /*----------------------------------------发送主流行情广播-----------------------------------------------------------*/
                     JSONObject broadcast = new JSONObject();
                     broadcast.put("action", "broadcast");
                     JSONObject broadcastData = new JSONObject();
-                    broadcastData.put("scene", 3512);
-                    broadcastData.put("info", params);
+                    broadcastData.put("scene", 3521);
+                    broadcastData.put("info", data);
                     broadcast.put("data", broadcastData);
                     WebsocketClientUtils.sendTextMessage(broadcast.toJSONString());
                 }

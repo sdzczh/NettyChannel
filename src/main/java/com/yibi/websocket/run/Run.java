@@ -10,7 +10,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 @Log4j2
 public class Run {
     public static void main(String[] args) {
-        log.info("全球行情更新方法启动");
+        log.info("okcoin订阅方法启动");
         ApplicationContext context = new ClassPathXmlApplicationContext("classpath:/spring/applicationContext.xml");
         PropertyUtils pt = new PropertyUtils("serverUrl.properties");
         String okcoinServer = pt.getProperty("BIT.WEBSOCKET");
