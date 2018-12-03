@@ -6,11 +6,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="yibi-websocket" />
+        <module name="BitChannel" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="yibi-websocket" target="7" />
+      <module name="BitChannel" target="8" />
     </bytecodeTargetLevel>
   </component>
 </project>
