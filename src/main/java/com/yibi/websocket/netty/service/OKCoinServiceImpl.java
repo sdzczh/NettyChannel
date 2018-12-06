@@ -6,7 +6,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.yibi.websocket.enums.CoinType;
 import com.yibi.websocket.enums.EnumScene;
 import com.yibi.websocket.netty.WebSocketService;
+import com.yibi.websocket.utils.DateUtils;
+import com.yibi.websocket.utils.RedisUtil;
 import com.yibi.websocket.utils.WebsocketClientUtils;
+import com.yibi.websocket.variables.RedisKey;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -75,6 +78,36 @@ public class OKCoinServiceImpl implements WebSocketService {
                     JSONObject broadcastData = new JSONObject();
                     broadcastData.put("scene", EnumScene.SCENEN_INDEX_OKEX_BTC.getScene());
                     broadcastData.put("info", data);
+                    broadcast.put("data", broadcastData);
+                    WebsocketClientUtils.sendTextMessage(broadcast.toJSONString());
+                }else if (channel.contains("kline")) {
+                    String[] strArr = channel.split("_");
+                    String c1 = strArr[3].toUpperCase();
+                    String c2 = strArr[4].toUpperCase();
+                    log.info("收到okcoin服务器数据最新K-line变化【" + c1 + " - " + c2 +"】：" + resultObj.toJSONString());
+                    JSONObject data = resultObj.getJSONObject("data");
+                    BigDecimal amount = data.getBigDecimal("vol");
+                    BigDecimal price = data.getBigDecimal("last");
+                    Long timestamp = data.getLong("timestamp");
+                    BigDecimal high = data.getBigDecimal("high");
+                    BigDecimal low = data.getBigDecimal("low");
+                    BigDecimal open = data.getBigDecimal("open");
+                    if (price == null) price = new BigDecimal(0);
+                    Map<String, Object> params = new HashMap<String, Object>();
+                    params.put("ammount", amount);
+                    params.put("price", price);
+                    params.put("time", DateUtils.stampToDate(String.valueOf(timestamp)));
+                    params.put("high", high);
+                    params.put("low", low);
+                    params.put("open", open);
+                    String redisKey = String.format(RedisKey.KLINEOKEX, c1, c2);
+                    RedisUtil.addStringObj(redis, redisKey, params);
+                    /*----------------------------------------发送主流行情广播-----------------------------------------------------------*/
+                    JSONObject broadcast = new JSONObject();
+                    broadcast.put("action", "broadcast");
+                    JSONObject broadcastData = new JSONObject();
+                    broadcastData.put("scene", EnumScene.SCENEN_KLINE_OKEX_BTC.getScene());
+                    broadcastData.put("info", params);
                     broadcast.put("data", broadcastData);
                     WebsocketClientUtils.sendTextMessage(broadcast.toJSONString());
                 }
