@@ -3,6 +3,7 @@ package com.yibi.websocket.netty.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.gson.JsonArray;
 import com.yibi.websocket.enums.CoinType;
 import com.yibi.websocket.enums.EnumScene;
 import com.yibi.websocket.netty.WebSocketService;
@@ -56,7 +57,7 @@ public class OKCoinServiceImpl implements WebSocketService {
                     String c1 = strArr[3].toUpperCase();
                     String c2 = strArr[4].toUpperCase();
                     log.info("收到okcoin服务器数据最新深度变化【" + c1 + " - " + c2 +"】：" + resultObj.toJSONString());
-                    JSONArray data = resultObj.getJSONArray("data");
+                    JSONObject data = resultObj.getJSONObject("data");
 
                     /*----------------------------------------发送主流行情广播-----------------------------------------------------------*/
                     JSONObject broadcast = new JSONObject();
@@ -85,17 +86,18 @@ public class OKCoinServiceImpl implements WebSocketService {
                     String c1 = strArr[3].toUpperCase();
                     String c2 = strArr[4].toUpperCase();
                     log.info("收到okcoin服务器数据最新K-line变化【" + c1 + " - " + c2 +"】：" + resultObj.toJSONString());
-                    JSONObject data = resultObj.getJSONObject("data");
-                    BigDecimal amount = data.getBigDecimal("vol");
-                    BigDecimal price = data.getBigDecimal("last");
-                    Long timestamp = data.getLong("timestamp");
-                    BigDecimal high = data.getBigDecimal("high");
-                    BigDecimal low = data.getBigDecimal("low");
-                    BigDecimal open = data.getBigDecimal("open");
+                    JSONArray data = resultObj.getJSONArray("data");
+                    JSONArray array = data.getJSONArray(0);
+                    Long timestamp = array.getLong(0);
+                    BigDecimal open = array.getBigDecimal(1);
+                    BigDecimal high = array.getBigDecimal(2);
+                    BigDecimal low = array.getBigDecimal(3);
+                    BigDecimal price = array.getBigDecimal(4);
+                    BigDecimal amount = array.getBigDecimal(5);
                     if (price == null) price = new BigDecimal(0);
                     Map<String, Object> params = new HashMap<String, Object>();
-                    params.put("ammount", amount);
-                    params.put("price", price);
+                    params.put("amount", amount);
+                    params.put("close", price);
                     params.put("time", DateUtils.stampToDate(String.valueOf(timestamp)));
                     params.put("high", high);
                     params.put("low", low);
