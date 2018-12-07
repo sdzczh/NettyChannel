@@ -1,39 +1,18 @@
 package com.yibi.websocket.enums;
 
-public enum EnumScene {
-	SCENEN_INDEX(300,"首页",300),
-	SCENEN_KLINE(400,"详情页",400),
-	/* XXX-X-X 场景 交易所1okex  币种1btc*/
-	SCENEN_INDEX_OKEX_BTC(30011,"首页",300),
-	SCENEN_KLINE_OKEX_BTC(40011,"首页",400),
-	;
+public class EnumScene {
 
-	private final int scene;
-	private final int type;
-	private final String desc;
-	EnumScene(int scene, String desc, int type) {
-		this.scene = scene;
-		this.desc = desc;
-		this.type = type;
-	}
+	//详情页 OKEX 深度 BTC
+	public static final Integer SCENEN_DETAILS_OKEX_DEPTH_BTC = 400112;
+	//详情页 OKEX 深度 ETH
+	public static final Integer SCENEN_DETAILS_OKEX_DEPTH_ETH = 400113;
+	//详情页 OKEX 价格 BTC
+	public static final Integer SCENEN_DETAILS_OKEX_PRICE_BTC = 400122;
+	//详情页 OKEX 价格 ETH
+	public static final Integer SCENEN_DETAILS_OKEX_PRICE_ETH = 400123;
+	//详情页 OKEX K线 BTC
+	public static final Integer SCENEN_DETAILS_OKEX_KLINE_BTC = 400132;
+	//详情页 OKEX K线 ETH
+	public static final Integer SCENEN_DETAILS_OKEX_KLINE_ETH = 400133;
 
-	/**
-	 * 场景
-	 * @return
-	 */
-	public int getScene(){
-		return this.scene;
-	}
-
-	/**
-	 * 描述
-	 * @return
-	 */
-	public String getDesc(){
-		return this.desc;
-	}
-	public int getType(){
-		return this.type;
-	}
-	
 }
