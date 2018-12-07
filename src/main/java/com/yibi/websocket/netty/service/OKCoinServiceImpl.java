@@ -3,16 +3,11 @@ package com.yibi.websocket.netty.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.google.gson.JsonArray;
-import com.yibi.websocket.enums.CoinType;
 import com.yibi.websocket.enums.EnumScene;
 import com.yibi.websocket.netty.WebSocketService;
 import com.yibi.websocket.utils.DateUtils;
-import com.yibi.websocket.utils.RedisUtil;
 import com.yibi.websocket.utils.WebsocketClientUtils;
-import com.yibi.websocket.variables.RedisKey;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -110,15 +105,13 @@ public class OKCoinServiceImpl implements WebSocketService {
                     params.put("high", high);
                     params.put("low", low);
                     params.put("open", open);
-                    String redisKey = String.format(RedisKey.KLINEOKEX, c1, c2);
-                    RedisUtil.addStringObj(redis, redisKey, params);
                     /*----------------------------------------发送主流行情广播-----------------------------------------------------------*/
                     JSONObject broadcast = new JSONObject();
                     broadcast.put("action", "broadcast");
                     JSONObject broadcastData = new JSONObject();
                     switch (c1){
-                        case "BTC" : broadcastData.put("scene", EnumScene.SCENEN_DETAILS_OKEX_KLINE_BTC);
-                        case "ETH" : broadcastData.put("scene", EnumScene.SCENEN_DETAILS_OKEX_KLINE_ETH);
+                        case "BTC" : broadcastData.put("scene", EnumScene.SCENEN_DETAILS_OKEX_KLINE_BTC); break;
+                        case "ETH" : broadcastData.put("scene", EnumScene.SCENEN_DETAILS_OKEX_KLINE_ETH); break;
                         default : broadcastData.put("scene", -1);
                     }
                     broadcastData.put("info", params);
