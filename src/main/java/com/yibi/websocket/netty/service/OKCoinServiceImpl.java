@@ -58,11 +58,12 @@ public class OKCoinServiceImpl implements WebSocketService {
                     JSONObject broadcast = new JSONObject();
                     broadcast.put("action", "broadcast");
                     JSONObject broadcastData = new JSONObject();
-                    switch (c1){
+                    /*switch (c1){
                         case "BTC" : broadcastData.put("scene", EnumScene.SCENEN_DETAILS_OKEX_DEPTH_BTC);
                         case "ETH" : broadcastData.put("scene", EnumScene.SCENEN_DETAILS_OKEX_DEPTH_ETH);
                         default : broadcastData.put("scene", -1);
-                    }
+                    }*/
+                    broadcastData.put("coin", c1);
                     broadcastData.put("info", data);
                     broadcast.put("data", broadcastData);
                     WebsocketClientUtils.sendTextMessage(broadcast.toJSONString());
@@ -76,11 +77,13 @@ public class OKCoinServiceImpl implements WebSocketService {
                     JSONObject broadcast = new JSONObject();
                     broadcast.put("action", "broadcast");
                     JSONObject broadcastData = new JSONObject();
-                    switch (c1){
+                    /* switch (c1){
+                        case "CNY" : broadcastData.put("scene", EnumScene.SCENEN_DETAILS_OKEX_PRICE_CNY);
                         case "BTC" : broadcastData.put("scene", EnumScene.SCENEN_DETAILS_OKEX_PRICE_BTC);
                         case "ETH" : broadcastData.put("scene", EnumScene.SCENEN_DETAILS_OKEX_PRICE_ETH);
                         default : broadcastData.put("scene", -1);
-                    }
+                    }*/
+                    broadcastData.put("coin", c1);
                     broadcastData.put("info", data);
                     broadcast.put("data", broadcastData);
                     WebsocketClientUtils.sendTextMessage(broadcast.toJSONString());
@@ -109,11 +112,12 @@ public class OKCoinServiceImpl implements WebSocketService {
                     JSONObject broadcast = new JSONObject();
                     broadcast.put("action", "broadcast");
                     JSONObject broadcastData = new JSONObject();
-                    switch (c1){
+                    /*switch (c1){
                         case "BTC" : broadcastData.put("scene", EnumScene.SCENEN_DETAILS_OKEX_KLINE_BTC); break;
                         case "ETH" : broadcastData.put("scene", EnumScene.SCENEN_DETAILS_OKEX_KLINE_ETH); break;
                         default : broadcastData.put("scene", -1);
-                    }
+                    }*/
+                    broadcastData.put("coin", c1);
                     broadcastData.put("info", params);
                     broadcast.put("data", broadcastData);
                     WebsocketClientUtils.sendTextMessage(broadcast.toJSONString());
