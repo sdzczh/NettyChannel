@@ -89,7 +89,8 @@ public class OKCoinServiceImpl implements WebSocketService {
                         if(coin.equals(c1)){
                             price = "1";
                         }else {
-                            price = RedisUtil.searchString(redis, String.format(RedisKey.USDT_PRICE, coin));
+                            String usdtPrice = RedisUtil.searchString(redis, String.format(RedisKey.USDT_PRICE, coin));
+                            price = new BigDecimal(usdtPrice).multiply(new BigDecimal(price)).toString();
                         }
                         JSONObject broadcast = new JSONObject();
                         broadcast.put("action", "broadcast");
