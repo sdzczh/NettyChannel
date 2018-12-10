@@ -101,7 +101,6 @@ public class OKCoinServiceImpl implements WebSocketService {
                             default : broadcastData.put("scene", -1);
                         }*/
                         broadcastData.put("scene", EnumScene.SCENEN_INDEX_OKEX);
-                        broadcastData.put("coin", c1);
                         broadcastData.put("info", price);
                         broadcast.put("c1", CoinType.getCode(c1));
                         broadcast.put("c2", CoinType.getCode(coin));
