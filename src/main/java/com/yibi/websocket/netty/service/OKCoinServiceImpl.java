@@ -6,10 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.yibi.websocket.enums.CoinType;
 import com.yibi.websocket.enums.EnumScene;
 import com.yibi.websocket.netty.WebSocketService;
-import com.yibi.websocket.utils.DateUtils;
-import com.yibi.websocket.utils.PriceConversionUtils;
-import com.yibi.websocket.utils.RedisUtil;
-import com.yibi.websocket.utils.WebsocketClientUtils;
+import com.yibi.websocket.utils.*;
 import com.yibi.websocket.variables.RedisKey;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -90,7 +87,8 @@ public class OKCoinServiceImpl implements WebSocketService {
                             price = "1";
                         }else {
                             String usdtPrice = RedisUtil.searchString(redis, String.format(RedisKey.USDT_PRICE, coin));
-                            price = new BigDecimal(usdtPrice).multiply(new BigDecimal(price)).toString();
+                            BigDecimal bPrice = new BigDecimal(usdtPrice).multiply(new BigDecimal(price));
+                            price = BigDecimalUtils.round(bPrice, 8).toString();
                         }
                         JSONObject broadcast = new JSONObject();
                         broadcast.put("action", "broadcast");
