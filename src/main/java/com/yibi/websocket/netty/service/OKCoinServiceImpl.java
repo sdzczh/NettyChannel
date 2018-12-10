@@ -8,7 +8,9 @@ import com.yibi.websocket.enums.EnumScene;
 import com.yibi.websocket.netty.WebSocketService;
 import com.yibi.websocket.utils.DateUtils;
 import com.yibi.websocket.utils.PriceConversionUtils;
+import com.yibi.websocket.utils.RedisUtil;
 import com.yibi.websocket.utils.WebsocketClientUtils;
+import com.yibi.websocket.variables.RedisKey;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -87,7 +89,7 @@ public class OKCoinServiceImpl implements WebSocketService {
                         if(coin.equals(c1)){
                             price = "1";
                         }else {
-                            price = pu.PriceConversion("USDT", price, coin);
+                            price = RedisUtil.searchString(redis, String.format(RedisKey.USDT_PRICE, coin));
                         }
                         JSONObject broadcast = new JSONObject();
                         broadcast.put("action", "broadcast");
@@ -104,7 +106,6 @@ public class OKCoinServiceImpl implements WebSocketService {
                         broadcast.put("c1", CoinType.getCode(c1));
                         broadcast.put("c2", CoinType.getCode(coin));
                         broadcast.put("data", broadcastData);
-                        log.info("收到okcoin服务器数据最新价格变化【" + c1 +" - " + coin + "】：" + data.get(1));
                         WebsocketClientUtils.sendTextMessage(broadcast.toJSONString());
                     }
                 }else if (channel.contains("kline")) {

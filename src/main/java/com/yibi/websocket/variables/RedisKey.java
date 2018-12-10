@@ -19,5 +19,8 @@ public class RedisKey {
 	//k线数据  时间间隔类型（1:1min,2:5min,3:30min,4:1hour,5:1day）:计价币种:交易币种
 	public static final String KLINE = "bituniverse:kline:%s:%s:%s";
 
+	//最新价格 USDT单价 USDT-BTC USDT-CNY
+	public static final String USDT_PRICE = "bituniverse:price:usdt:%s";
+
 	
 }
