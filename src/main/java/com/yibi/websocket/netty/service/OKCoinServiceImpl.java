@@ -3,9 +3,11 @@ package com.yibi.websocket.netty.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.yibi.websocket.enums.CoinType;
 import com.yibi.websocket.enums.EnumScene;
 import com.yibi.websocket.netty.WebSocketService;
 import com.yibi.websocket.utils.DateUtils;
+import com.yibi.websocket.utils.PriceConversionUtils;
 import com.yibi.websocket.utils.WebsocketClientUtils;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -15,7 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,6 +39,7 @@ public class OKCoinServiceImpl implements WebSocketService {
         //ClassPathXmlApplicationContext appCtx = new ClassPathXmlApplicationContext("applicationContext.xml");
         //redis = (RedisTemplate<String, Object>) appCtx.getBean("redis");
     }
+    PriceConversionUtils pu = new PriceConversionUtils();
 
     @Override
     public void onReceive(String msg) {
@@ -73,21 +78,31 @@ public class OKCoinServiceImpl implements WebSocketService {
                     JSONArray data = resultObj.getJSONArray("data").getJSONArray(0);
 
                     /*----------------------------------------发送最新价格广播-----------------------------------------------------------*/
-                    JSONObject broadcast = new JSONObject();
-                    broadcast.put("action", "broadcast");
-                    JSONObject broadcastData = new JSONObject();
-                    /* switch (c1){
-                        case "CNY" : broadcastData.put("scene", EnumScene.SCENEN_DETAILS_OKEX_PRICE_CNY);
-                        case "BTC" : broadcastData.put("scene", EnumScene.SCENEN_DETAILS_OKEX_PRICE_BTC);
-                        case "ETH" : broadcastData.put("scene", EnumScene.SCENEN_DETAILS_OKEX_PRICE_ETH);
-                        default : broadcastData.put("scene", -1);
-                    }*/
-                    broadcastData.put("scene", EnumScene.SCENEN_INDEX_OKEX);
-                    broadcastData.put("coin", c1);
-                    broadcastData.put("price", data.get(1));
-                    broadcast.put("data", broadcastData);
-                    log.info("收到okcoin服务器数据最新价格变化【" + c1 +"】：" + data.get(1));
-                    WebsocketClientUtils.sendTextMessage(broadcast.toJSONString());
+                    List<String> list = new ArrayList<>();
+                    list.add("CNY");
+                    list.add("BTC");
+                    list.add("ETH");
+                    for(String coin : list){
+                        String price = data.get(1).toString();
+                        price = pu.PriceConversion("USDT", "1", coin);
+                        JSONObject broadcast = new JSONObject();
+                        broadcast.put("action", "broadcast");
+                        JSONObject broadcastData = new JSONObject();
+                        /* switch (c1){
+                            case "CNY" : broadcastData.put("scene", EnumScene.SCENEN_DETAILS_OKEX_PRICE_CNY);
+                            case "BTC" : broadcastData.put("scene", EnumScene.SCENEN_DETAILS_OKEX_PRICE_BTC);
+                            case "ETH" : broadcastData.put("scene", EnumScene.SCENEN_DETAILS_OKEX_PRICE_ETH);
+                            default : broadcastData.put("scene", -1);
+                        }*/
+                        broadcastData.put("scene", EnumScene.SCENEN_INDEX_OKEX);
+                        broadcastData.put("coin", c1);
+                        broadcastData.put("info", price);
+                        broadcast.put("c1", CoinType.getCode(c1));
+                        broadcast.put("c2", CoinType.getCode(coin));
+                        broadcast.put("data", broadcastData);
+                        log.info("收到okcoin服务器数据最新价格变化【" + c1 +" - " + coin + "】：" + data.get(1));
+                        WebsocketClientUtils.sendTextMessage(broadcast.toJSONString());
+                    }
                 }else if (channel.contains("kline")) {
                     String[] strArr = channel.split("_");
                     String c1 = strArr[3].toUpperCase();
