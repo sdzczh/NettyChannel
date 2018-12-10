@@ -70,7 +70,6 @@ public class OKCoinServiceImpl implements WebSocketService {
                 }else if (channel.contains("deals")) {
                     String[] strArr = channel.split("_");
                     String c1 = strArr[3].toUpperCase();
-                    log.info("收到okcoin服务器数据最新价格变化【" + c1 +"】：" + resultObj.toJSONString());
                     JSONArray data = resultObj.getJSONArray("data").getJSONArray(0);
 
                     /*----------------------------------------发送最新价格广播-----------------------------------------------------------*/
@@ -85,8 +84,9 @@ public class OKCoinServiceImpl implements WebSocketService {
                     }*/
                     broadcastData.put("scene", EnumScene.SCENEN_INDEX_OKEX);
                     broadcastData.put("coin", c1);
-                    broadcastData.put("info", data.get(1));
+                    broadcastData.put("price", data.get(1));
                     broadcast.put("data", broadcastData);
+                    log.info("收到okcoin服务器数据最新价格变化【" + c1 +"】：" + data.get(1));
                     WebsocketClientUtils.sendTextMessage(broadcast.toJSONString());
                 }else if (channel.contains("kline")) {
                     String[] strArr = channel.split("_");
