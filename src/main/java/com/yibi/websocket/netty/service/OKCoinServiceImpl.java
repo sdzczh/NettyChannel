@@ -54,7 +54,7 @@ public class OKCoinServiceImpl implements WebSocketService {
                     log.info("收到okcoin服务器数据最新深度变化【" + c1 + " - " + c2 +"】：" + resultObj.toJSONString());
                     JSONObject data = resultObj.getJSONObject("data");
 
-                    /*----------------------------------------发送主流行情广播-----------------------------------------------------------*/
+                    /*----------------------------------------发送深度广播-----------------------------------------------------------*/
                     JSONObject broadcast = new JSONObject();
                     broadcast.put("action", "broadcast");
                     JSONObject broadcastData = new JSONObject();
@@ -73,7 +73,7 @@ public class OKCoinServiceImpl implements WebSocketService {
                     log.info("收到okcoin服务器数据最新价格变化【" + c1 +"】：" + resultObj.toJSONString());
                     JSONArray data = resultObj.getJSONArray("data");
 
-                    /*----------------------------------------发送主流行情广播-----------------------------------------------------------*/
+                    /*----------------------------------------发送最新价格广播-----------------------------------------------------------*/
                     JSONObject broadcast = new JSONObject();
                     broadcast.put("action", "broadcast");
                     JSONObject broadcastData = new JSONObject();
@@ -83,8 +83,9 @@ public class OKCoinServiceImpl implements WebSocketService {
                         case "ETH" : broadcastData.put("scene", EnumScene.SCENEN_DETAILS_OKEX_PRICE_ETH);
                         default : broadcastData.put("scene", -1);
                     }*/
+                    broadcastData.put("scene", EnumScene.SCENEN_INDEX_OKEX);
                     broadcastData.put("coin", c1);
-                    broadcastData.put("info", data);
+                    broadcastData.put("info", data.get(1));
                     broadcast.put("data", broadcastData);
                     WebsocketClientUtils.sendTextMessage(broadcast.toJSONString());
                 }else if (channel.contains("kline")) {
@@ -108,7 +109,7 @@ public class OKCoinServiceImpl implements WebSocketService {
                     params.put("high", high);
                     params.put("low", low);
                     params.put("open", open);
-                    /*----------------------------------------发送主流行情广播-----------------------------------------------------------*/
+                    /*----------------------------------------发送线广播-----------------------------------------------------------*/
                     JSONObject broadcast = new JSONObject();
                     broadcast.put("action", "broadcast");
                     JSONObject broadcastData = new JSONObject();
@@ -117,6 +118,7 @@ public class OKCoinServiceImpl implements WebSocketService {
                         case "ETH" : broadcastData.put("scene", EnumScene.SCENEN_DETAILS_OKEX_KLINE_ETH); break;
                         default : broadcastData.put("scene", -1);
                     }*/
+                    broadcastData.put("scene", EnumScene.SCENEN_DETAILS_OKEX);
                     broadcastData.put("coin", c1);
                     broadcastData.put("info", params);
                     broadcast.put("data", broadcastData);
