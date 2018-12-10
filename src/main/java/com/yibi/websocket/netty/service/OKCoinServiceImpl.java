@@ -84,7 +84,11 @@ public class OKCoinServiceImpl implements WebSocketService {
                     list.add("ETH");
                     for(String coin : list){
                         String price = data.get(1).toString();
-                        price = pu.PriceConversion("USDT", "1", coin);
+                        if(coin.equals(c1)){
+                            price = "1";
+                        }else {
+                            price = pu.PriceConversion("USDT", price, coin);
+                        }
                         JSONObject broadcast = new JSONObject();
                         broadcast.put("action", "broadcast");
                         JSONObject broadcastData = new JSONObject();
