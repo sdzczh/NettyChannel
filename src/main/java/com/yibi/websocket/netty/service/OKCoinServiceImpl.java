@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.yibi.websocket.enums.CoinType;
+import com.yibi.websocket.enums.EnumExchange;
 import com.yibi.websocket.enums.EnumScene;
 import com.yibi.websocket.netty.WebSocketService;
 import com.yibi.websocket.utils.*;
@@ -99,10 +100,13 @@ public class OKCoinServiceImpl implements WebSocketService {
                             case "ETH" : broadcastData.put("scene", EnumScene.SCENEN_DETAILS_OKEX_PRICE_ETH);
                             default : broadcastData.put("scene", -1);
                         }*/
+                        Integer c2 = CoinType.getCode(coin);
+//                        RedisUtil.addString(redis, String.format(RedisKey.COIN_PRICE, EnumExchange.OKEX.getExchangId(), CoinType.getCode(c1).toString()), c2, price);
                         broadcastData.put("scene", EnumScene.SCENEN_INDEX_OKEX);
                         broadcastData.put("info", price);
                         broadcastData.put("c1", CoinType.getCode(c1));
-                        broadcastData.put("c2", CoinType.getCode(coin));
+                        broadcastData.put("c2", c2);
+                        broadcastData.put("exchangeId", EnumExchange.OKEX.getExchangId());
                         broadcast.put("data", broadcastData);
                         WebsocketClientUtils.sendTextMessage(broadcast.toJSONString());
                     }

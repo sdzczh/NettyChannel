@@ -21,6 +21,8 @@ public class RedisKey {
 
 	//最新价格 USDT单价 USDT-BTC USDT-CNY
 	public static final String USDT_PRICE = "bituniverse:price:usdt:%s";
+	//币对最新价格  交易所：计价币：交易币  c1:c2
+	public static final String COIN_PRICE = "bituniverse:price:%s:%s:%s";
 
 	
 }
