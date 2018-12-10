@@ -71,7 +71,7 @@ public class OKCoinServiceImpl implements WebSocketService {
                     String[] strArr = channel.split("_");
                     String c1 = strArr[3].toUpperCase();
                     log.info("收到okcoin服务器数据最新价格变化【" + c1 +"】：" + resultObj.toJSONString());
-                    JSONArray data = resultObj.getJSONArray("data");
+                    JSONArray data = resultObj.getJSONArray("data").getJSONArray(0);
 
                     /*----------------------------------------发送最新价格广播-----------------------------------------------------------*/
                     JSONObject broadcast = new JSONObject();
