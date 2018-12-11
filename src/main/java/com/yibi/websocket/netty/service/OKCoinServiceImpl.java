@@ -93,7 +93,10 @@ public class OKCoinServiceImpl implements WebSocketService {
                         }
                         if("CNY".equals(coin)){
                             BigDecimal total = new BigDecimal(price).multiply(new BigDecimal(data.get(2).toString()));
+                            //记录超级大单
                             getSuperOrder(coin, total, data);
+                            //记录24小时状态
+                            save24hState(coin, total, data);
                         }
                         JSONObject broadcast = new JSONObject();
                         broadcast.put("action", "broadcast");
@@ -152,6 +155,12 @@ public class OKCoinServiceImpl implements WebSocketService {
         }
     }
 
+    /**
+     * 获取超级大单
+     * @param coin
+     * @param total
+     * @param data
+     */
     public void getSuperOrder(String coin, BigDecimal total, JSONArray data) {
         Map<String, Object> resultMap = new HashMap<>();
         BigDecimal min = new BigDecimal("800000");
@@ -164,6 +173,27 @@ public class OKCoinServiceImpl implements WebSocketService {
             resultMap.put("total", total);
             resultMap.put("size", data.get(2));
             RedisUtil.addHashMap(redis, String.format(RedisKey.SUPER_ORDER, coin), resultMap, false);
+        }
+    }
+
+    public void save24hState(String coin, BigDecimal total, JSONArray data) throws Exception {
+        String side = data.get(4).toString();
+        if("bid".equals(side)){
+            String inKey = String.format(RedisKey.DAY_IN_ORDER, coin);
+            String oldIn = RedisUtil.searchString(redis, inKey);
+            if(!"".equals(oldIn) && oldIn != null){
+                total = total.add(new BigDecimal(oldIn));
+            }
+            RedisUtil.addString(redis, inKey, total.toString());
+        }else if("ask".equals(side)) {
+            String outKey = String.format(RedisKey.DAY_OUT_ORDER, coin);
+            String oldOut = RedisUtil.searchString(redis, outKey);
+            if (!"".equals(oldOut) && oldOut != null) {
+                total = total.add(new BigDecimal(oldOut));
+            }
+            RedisUtil.addString(redis, outKey, total.toString());
+        }else{
+            throw new Exception("获取最新订单信息有误");
         }
     }
 }
