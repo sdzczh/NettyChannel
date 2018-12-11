@@ -179,14 +179,14 @@ public class OKCoinServiceImpl implements WebSocketService {
     public void save24hState(String coin, BigDecimal total, JSONArray data) throws Exception {
         String side = data.get(4).toString();
         if("bid".equals(side)){
-            String inKey = String.format(RedisKey.DAY_IN_ORDER, coin);
+            String inKey = RedisKey.DAY_IN_ORDER;
             String oldIn = RedisUtil.searchString(redis, inKey);
             if(!"".equals(oldIn) && oldIn != null){
                 total = total.add(new BigDecimal(oldIn));
             }
             RedisUtil.addString(redis, inKey, total.toString());
         }else if("ask".equals(side)) {
-            String outKey = String.format(RedisKey.DAY_OUT_ORDER, coin);
+            String outKey = RedisKey.DAY_OUT_ORDER;
             String oldOut = RedisUtil.searchString(redis, outKey);
             if (!"".equals(oldOut) && oldOut != null) {
                 total = total.add(new BigDecimal(oldOut));

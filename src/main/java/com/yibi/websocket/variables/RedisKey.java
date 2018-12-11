@@ -27,8 +27,8 @@ public class RedisKey {
 	//超级大单
 	public static final String SUPER_ORDER = "bituniverse:superOrder:%s";
 	//24小时流入
-	public static final String DAY_IN_ORDER = "bituniverse:dayState:in:%s";
+	public static final String DAY_IN_ORDER = "bituniverse:dayState:in";
 	//24小时流出
-	public static final String DAY_OUT_ORDER = "bituniverse:dayState:out:%s";
+	public static final String DAY_OUT_ORDER = "bituniverse:dayState:out";
 
 }
