@@ -30,5 +30,9 @@ public class RedisKey {
 	public static final String DAY_IN_ORDER = "bituniverse:dayState:in";
 	//24小时流出
 	public static final String DAY_OUT_ORDER = "bituniverse:dayState:out";
+	//24小时净流入
+	public static final String DAY_ACTUAL_ORDER = "bituniverse:dayState:actual";
+	//24小时净流入百分比
+	public static final String DAY_ACTUALPARENT_ORDER = "bituniverse:dayState:parent";
 
 }
