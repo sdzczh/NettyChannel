@@ -91,17 +91,11 @@ public class OKCoinServiceImpl implements WebSocketService {
                             BigDecimal bPrice = new BigDecimal(usdtPrice).multiply(new BigDecimal(price));
                             price = BigDecimalUtils.round(bPrice, 8).toString();
                         }
+                        getSuperOrder(coin, new BigDecimal(price), data);
                         JSONObject broadcast = new JSONObject();
                         broadcast.put("action", "broadcast");
                         JSONObject broadcastData = new JSONObject();
-                        /* switch (c1){
-                            case "CNY" : broadcastData.put("scene", EnumScene.SCENEN_DETAILS_OKEX_PRICE_CNY);
-                            case "BTC" : broadcastData.put("scene", EnumScene.SCENEN_DETAILS_OKEX_PRICE_BTC);
-                            case "ETH" : broadcastData.put("scene", EnumScene.SCENEN_DETAILS_OKEX_PRICE_ETH);
-                            default : broadcastData.put("scene", -1);
-                        }*/
                         Integer c2 = CoinType.getCode(coin);
-//                        RedisUtil.addString(redis, String.format(RedisKey.COIN_PRICE, EnumExchange.OKEX.getExchangId(), CoinType.getCode(c1).toString()), c2, price);
                         broadcastData.put("scene", EnumScene.SCENEN_INDEX_OKEX);
                         broadcastData.put("info", price);
                         broadcastData.put("c1", CoinType.getCode(c1));
@@ -152,6 +146,21 @@ public class OKCoinServiceImpl implements WebSocketService {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public void getSuperOrder(String coin, BigDecimal total, JSONArray data) {
+        Map<String, Object> resultMap = new HashMap<>();
+        BigDecimal min = new BigDecimal("800000");
+        if(total.compareTo(min) == -1){
+            return;
+        }else{
+            resultMap.put("time", data.get(3));
+            resultMap.put("side", data.get(4));
+            resultMap.put("price", data.get(1));
+            resultMap.put("total", total);
+            resultMap.put("size", data.get(2));
+            RedisUtil.addHashMap(redis, String.format(RedisKey.SUPER_ORDER, coin), resultMap, false);
         }
     }
 }
