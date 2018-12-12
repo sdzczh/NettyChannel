@@ -82,14 +82,12 @@ public class OKCoinServiceImpl implements WebSocketService {
                     String[] strArr = channel.split("_");
                     String c1 = strArr[3].toUpperCase();
                     JSONArray data = resultObj.getJSONArray("data").getJSONArray(0);
-                    insert(data, c1);
 
                     /*----------------------------------------发送最新价格广播-----------------------------------------------------------*/
                     List<String> list = new ArrayList<>();
                     list.add("CNY");
                     list.add("BTC");
                     list.add("ETH");
-                    BigDecimal cnyTotal = new BigDecimal(0);
                     for(String coin : list){
                         String price = data.get(1).toString();
                         if(coin.equals(c1)){
@@ -100,12 +98,12 @@ public class OKCoinServiceImpl implements WebSocketService {
                             price = BigDecimalUtils.round(bPrice, 8).toString();
                         }
                         if("CNY".equals(coin)){
+                            insert(data, c1);
                             BigDecimal total = new BigDecimal(price).multiply(new BigDecimal(data.get(2).toString()));
-                            cnyTotal = total;
                             //记录超级大单
                             getSuperOrder(coin, total, data);
                             //记录24小时状态
-                            save24hState(c1, cnyTotal, data);
+                            save24hState(c1, total, data);
                         }else{
 //                            save24hState(coin);
                         }
@@ -232,7 +230,7 @@ public class OKCoinServiceImpl implements WebSocketService {
         Integer type = "bid".equals(data.get(4)) ? 0 : 1;
         OkexDealRecord okexDealRecord = new OkexDealRecord();
         okexDealRecord.setPrice(price);
-        okexDealRecord.setTime(DateUtils.getCurrentDateStr() + time);
+        okexDealRecord.setTime(DateUtils.getCurrentDateStr() + " " + time);
         okexDealRecord.setType(type);
         okexDealRecord.setVolume(volume);
         okexDealRecord.setCoinid(coinId);
