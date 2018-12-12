@@ -18,7 +18,18 @@ public class BigDecimalUtils {
 		BigDecimal bd3 = bd1.add(bd2);
 		return bd3;
 	}
-	
+
+	/**
+	 * 正负转换
+	 * @param v
+	 * @return BigDecimal
+	 * @date 2018-1-4
+	 * @author lina
+	 */
+	public static BigDecimal plusMinus(BigDecimal v){
+		return v.multiply(new BigDecimal(-1));
+	}
+
 	/**
 	 * @描述 加法<br>
 	 * @return 和

@@ -179,8 +179,10 @@ public class OKCoinServiceImpl implements WebSocketService {
     public void save24hState(String coin, BigDecimal total, JSONArray data) throws Exception {
         String side = data.get(4).toString();
         String inKey = RedisKey.DAY_IN_ORDER;
+        //之前记录的今日交易买入总金额
         String oldIn = RedisUtil.searchString(redis, inKey);
         String outKey = RedisKey.DAY_OUT_ORDER;
+        //之前记录的今日交易卖出总金额
         String oldOut = RedisUtil.searchString(redis, outKey);
         if("bid".equals(side)){
             if(!"".equals(oldIn) && oldIn != null){
@@ -200,8 +202,14 @@ public class OKCoinServiceImpl implements WebSocketService {
         String actualKey = RedisKey.DAY_ACTUAL_ORDER;
         RedisUtil.addString(redis, actualKey, actual.toString());
         BigDecimal sum = new BigDecimal(oldIn).add(new BigDecimal(oldOut));
-        BigDecimal parent = actual.divide(sum).multiply(new BigDecimal(100));
         String actualParentKey = RedisKey.DAY_ACTUALPARENT_ORDER;
-        RedisUtil.addString(redis, actualParentKey, parent.toString());
+        if(actual.compareTo(BigDecimal.ZERO) == -1){
+            actual = BigDecimalUtils.plusMinus(actual);
+            BigDecimal parent = actual.divide(sum, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100));
+            RedisUtil.addString(redis, actualParentKey, "-" + BigDecimalUtils.roundDown(parent, 2) + "%");
+        }else{
+            BigDecimal parent = actual.divide(sum, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100));
+            RedisUtil.addString(redis, actualParentKey, "+" + BigDecimalUtils.roundDown(parent, 2) + "%");
+        }
     }
 }
