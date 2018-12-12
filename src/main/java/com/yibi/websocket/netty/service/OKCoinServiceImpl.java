@@ -97,6 +97,8 @@ public class OKCoinServiceImpl implements WebSocketService {
                             getSuperOrder(coin, total, data);
                             //记录24小时状态
                             save24hState(coin, total, data);
+                        }else{
+                            save24hState(coin);
                         }
                         JSONObject broadcast = new JSONObject();
                         broadcast.put("action", "broadcast");
@@ -201,14 +203,23 @@ public class OKCoinServiceImpl implements WebSocketService {
         BigDecimal actual = new BigDecimal(oldIn).subtract(new BigDecimal(oldOut));
         String actualKey = RedisKey.DAY_ACTUAL_ORDER;
         RedisUtil.addString(redis, actualKey, actual.toString());
-        BigDecimal sum = new BigDecimal(oldIn).add(new BigDecimal(oldOut));
+    }
+    public void save24hState(String coin){
+        String inKey = RedisKey.DAY_IN_ORDER;
+        //之前记录的今日交易买入总金额
+        String oldIn = RedisUtil.searchString(redis, inKey);
+        String outKey = RedisKey.DAY_OUT_ORDER;
+        //之前记录的今日交易卖出总金额
+        String oldOut = RedisUtil.searchString(redis, outKey);
+        BigDecimal actual = new BigDecimal(oldIn).subtract(new BigDecimal(oldOut));
+        String marketCap = RedisUtil.searchString(redis, String.format(RedisKey.COIN_MARKET_CAP, coin));
         String actualParentKey = RedisKey.DAY_ACTUALPARENT_ORDER;
         if(actual.compareTo(BigDecimal.ZERO) == -1){
             actual = BigDecimalUtils.plusMinus(actual);
-            BigDecimal parent = actual.divide(sum, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100));
+            BigDecimal parent = actual.divide(new BigDecimal(marketCap), BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100));
             RedisUtil.addString(redis, actualParentKey, "-" + BigDecimalUtils.roundDown(parent, 2) + "%");
         }else{
-            BigDecimal parent = actual.divide(sum, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100));
+            BigDecimal parent = actual.divide(new BigDecimal(marketCap), BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100));
             RedisUtil.addString(redis, actualParentKey, "+" + BigDecimalUtils.roundDown(parent, 2) + "%");
         }
     }

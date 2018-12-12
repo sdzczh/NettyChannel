@@ -34,5 +34,7 @@ public class RedisKey {
 	public static final String DAY_ACTUAL_ORDER = "bituniverse:dayState:actual";
 	//24小时净流入百分比
 	public static final String DAY_ACTUALPARENT_ORDER = "bituniverse:dayState:parent";
+	//币种市值
+	public static final String COIN_MARKET_CAP = "bituniverse:coinMarketCap:%s";
 
 }
