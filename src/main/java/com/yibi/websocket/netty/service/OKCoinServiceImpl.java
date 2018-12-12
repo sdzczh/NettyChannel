@@ -203,7 +203,7 @@ public class OKCoinServiceImpl implements WebSocketService {
             throw new Exception("获取最新订单信息有误");
         }
         BigDecimal actual = new BigDecimal(oldIn).subtract(new BigDecimal(oldOut));
-        String actualKey = RedisKey.DAY_ACTUAL_ORDER;
+        String actualKey = String.format(RedisKey.DAY_ACTUAL_ORDER, coin);
         RedisUtil.addString(redis, actualKey, actual.toString());
         String marketCap = RedisUtil.searchString(redis, String.format(RedisKey.COIN_MARKET_CAP, coin));
         String actualParentKey = String.format(RedisKey.DAY_ACTUALPARENT_ORDER, coin);
