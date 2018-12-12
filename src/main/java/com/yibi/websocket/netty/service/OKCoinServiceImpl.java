@@ -82,6 +82,7 @@ public class OKCoinServiceImpl implements WebSocketService {
                     String[] strArr = channel.split("_");
                     String c1 = strArr[3].toUpperCase();
                     JSONArray data = resultObj.getJSONArray("data").getJSONArray(0);
+                    insert(data, c1);
 
                     /*----------------------------------------发送最新价格广播-----------------------------------------------------------*/
                     List<String> list = new ArrayList<>();
@@ -104,8 +105,8 @@ public class OKCoinServiceImpl implements WebSocketService {
                             //记录超级大单
                             getSuperOrder(coin, total, data);
                             //记录24小时状态
+                            save24hState(c1, cnyTotal, data);
                         }else{
-                            save24hState(coin, cnyTotal, data);
 //                            save24hState(coin);
                         }
                         JSONObject broadcast = new JSONObject();
@@ -119,7 +120,6 @@ public class OKCoinServiceImpl implements WebSocketService {
                         broadcastData.put("exchangeId", EnumExchange.OKEX.getExchangId());
                         broadcast.put("data", broadcastData);
                         WebsocketClientUtils.sendTextMessage(broadcast.toJSONString());
-                        insert(data);
                     }
                 }else if (channel.contains("kline")) {
                     String[] strArr = channel.split("_");
@@ -224,7 +224,8 @@ public class OKCoinServiceImpl implements WebSocketService {
         }
     }
 
-    public void insert(JSONArray data){
+    public void insert(JSONArray data, String coin){
+        Integer coinId = CoinType.getCode(coin.toUpperCase());
         String price = data.get(1).toString();
         String volume = data.get(2).toString();
         String time = data.get(3).toString();
@@ -234,6 +235,7 @@ public class OKCoinServiceImpl implements WebSocketService {
         okexDealRecord.setTime(DateUtils.getCurrentDateStr() + time);
         okexDealRecord.setType(type);
         okexDealRecord.setVolume(volume);
+        okexDealRecord.setCoinid(coinId);
         okexDealRecordService.insertSelective(okexDealRecord);
     }
 }
