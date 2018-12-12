@@ -98,7 +98,7 @@ public class OKCoinServiceImpl implements WebSocketService {
                             price = BigDecimalUtils.round(bPrice, 8).toString();
                         }
                         if("CNY".equals(coin)){
-                            insert(data, c1);
+                            insert(data, c1, price);
                             BigDecimal total = new BigDecimal(price).multiply(new BigDecimal(data.get(2).toString()));
                             //记录超级大单
                             getSuperOrder(coin, total, data);
@@ -222,9 +222,8 @@ public class OKCoinServiceImpl implements WebSocketService {
         }
     }
 
-    public void insert(JSONArray data, String coin){
+    public void insert(JSONArray data, String coin, String price){
         Integer coinId = CoinType.getCode(coin.toUpperCase());
-        String price = data.get(1).toString();
         String volume = data.get(2).toString();
         String time = data.get(3).toString();
         Integer type = "bid".equals(data.get(4)) ? 0 : 1;
