@@ -91,13 +91,15 @@ public class OKCoinServiceImpl implements WebSocketService {
                             BigDecimal bPrice = new BigDecimal(usdtPrice).multiply(new BigDecimal(price));
                             price = BigDecimalUtils.round(bPrice, 8).toString();
                         }
-                        BigDecimal total = new BigDecimal(price).multiply(new BigDecimal(data.get(2).toString()));
+                        BigDecimal cnyTotal = new BigDecimal(0);
                         if("CNY".equals(coin)){
+                            BigDecimal total = new BigDecimal(price).multiply(new BigDecimal(data.get(2).toString()));
+                            cnyTotal = total;
                             //记录超级大单
                             getSuperOrder(coin, total, data);
                             //记录24小时状态
                         }else{
-                            save24hState(coin, total, data);
+                            save24hState(coin, cnyTotal, data);
 //                            save24hState(coin);
                         }
                         JSONObject broadcast = new JSONObject();
