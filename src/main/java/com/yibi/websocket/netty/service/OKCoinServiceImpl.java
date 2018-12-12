@@ -82,6 +82,7 @@ public class OKCoinServiceImpl implements WebSocketService {
                     list.add("CNY");
                     list.add("BTC");
                     list.add("ETH");
+                    BigDecimal cnyTotal = new BigDecimal(0);
                     for(String coin : list){
                         String price = data.get(1).toString();
                         if(coin.equals(c1)){
@@ -91,7 +92,6 @@ public class OKCoinServiceImpl implements WebSocketService {
                             BigDecimal bPrice = new BigDecimal(usdtPrice).multiply(new BigDecimal(price));
                             price = BigDecimalUtils.round(bPrice, 8).toString();
                         }
-                        BigDecimal cnyTotal = new BigDecimal(0);
                         if("CNY".equals(coin)){
                             BigDecimal total = new BigDecimal(price).multiply(new BigDecimal(data.get(2).toString()));
                             cnyTotal = total;
