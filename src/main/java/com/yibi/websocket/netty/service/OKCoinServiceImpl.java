@@ -206,7 +206,7 @@ public class OKCoinServiceImpl implements WebSocketService {
         String actualKey = RedisKey.DAY_ACTUAL_ORDER;
         RedisUtil.addString(redis, actualKey, actual.toString());
         String marketCap = RedisUtil.searchString(redis, String.format(RedisKey.COIN_MARKET_CAP, coin));
-        String actualParentKey = RedisKey.DAY_ACTUALPARENT_ORDER;
+        String actualParentKey = String.format(RedisKey.DAY_ACTUALPARENT_ORDER, coin);
         if(actual.compareTo(BigDecimal.ZERO) == -1){
             actual = BigDecimalUtils.plusMinus(actual);
             BigDecimal parent = actual.divide(new BigDecimal(marketCap), BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100));
