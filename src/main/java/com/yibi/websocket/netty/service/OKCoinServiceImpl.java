@@ -182,10 +182,10 @@ public class OKCoinServiceImpl implements WebSocketService {
 
     public void save24hState(String coin, BigDecimal total, JSONArray data) throws Exception {
         String side = data.get(4).toString();
-        String inKey = RedisKey.DAY_IN_ORDER;
+        String inKey = String.format(RedisKey.DAY_IN_ORDER, coin);
         //之前记录的今日交易买入总金额
         String oldIn = RedisUtil.searchString(redis, inKey);
-        String outKey = RedisKey.DAY_OUT_ORDER;
+        String outKey = String.format(RedisKey.DAY_OUT_ORDER, coin);
         //之前记录的今日交易卖出总金额
         String oldOut = RedisUtil.searchString(redis, outKey);
         if("bid".equals(side)){
