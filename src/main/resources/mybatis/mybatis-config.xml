@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration    PUBLIC "-//mybatis.org//DTD Config 3.0//EN"    "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+
+    <!--开启二级缓存与EhcachCache整合 -->
+    <settings>
+        <setting name="cacheEnabled" value="true" />
+    </settings>
+    <!-- 类型别名是为 Java类型命名一个短的名字。 它只和 XML配置有关,只用来减少类完全 限定名的多余部分 -->
+    <typeAliases>
+        <package name="com.yibi.websocket.entity"/>
+    </typeAliases>
+
+    <mappers>
+
+    </mappers>
+
+</configuration>

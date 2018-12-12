@@ -3,13 +3,16 @@ package com.yibi.websocket.netty.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.yibi.websocket.entity.OkexDealRecord;
 import com.yibi.websocket.enums.CoinType;
 import com.yibi.websocket.enums.EnumExchange;
 import com.yibi.websocket.enums.EnumScene;
 import com.yibi.websocket.netty.WebSocketService;
+import com.yibi.websocket.service.OkexDealRecordService;
 import com.yibi.websocket.utils.*;
 import com.yibi.websocket.variables.RedisKey;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +38,8 @@ public class OKCoinServiceImpl implements WebSocketService {
 
     @Resource
     private RedisTemplate<String, String> redis;
+    @Autowired
+    private OkexDealRecordService okexDealRecordService;
 
     static {
         //ClassPathXmlApplicationContext appCtx = new ClassPathXmlApplicationContext("applicationContext.xml");
@@ -113,6 +119,7 @@ public class OKCoinServiceImpl implements WebSocketService {
                         broadcastData.put("exchangeId", EnumExchange.OKEX.getExchangId());
                         broadcast.put("data", broadcastData);
                         WebsocketClientUtils.sendTextMessage(broadcast.toJSONString());
+                        insert(data);
                     }
                 }else if (channel.contains("kline")) {
                     String[] strArr = channel.split("_");
@@ -216,23 +223,17 @@ public class OKCoinServiceImpl implements WebSocketService {
             RedisUtil.addString(redis, actualParentKey, "+" + BigDecimalUtils.roundDown(parent, 2) + "%");
         }
     }
-/*    public void save24hState(String coin){
-        String inKey = RedisKey.DAY_IN_ORDER;
-        //之前记录的今日交易买入总金额
-        String oldIn = RedisUtil.searchString(redis, inKey);
-        String outKey = RedisKey.DAY_OUT_ORDER;
-        //之前记录的今日交易卖出总金额
-        String oldOut = RedisUtil.searchString(redis, outKey);
-        BigDecimal actual = new BigDecimal(oldIn).subtract(new BigDecimal(oldOut));
-        String marketCap = RedisUtil.searchString(redis, String.format(RedisKey.COIN_MARKET_CAP, coin));
-        String actualParentKey = RedisKey.DAY_ACTUALPARENT_ORDER;
-        if(actual.compareTo(BigDecimal.ZERO) == -1){
-            actual = BigDecimalUtils.plusMinus(actual);
-            BigDecimal parent = actual.divide(new BigDecimal(marketCap), BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100));
-            RedisUtil.addString(redis, actualParentKey, "-" + BigDecimalUtils.roundDown(parent, 2) + "%");
-        }else{
-            BigDecimal parent = actual.divide(new BigDecimal(marketCap), BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100));
-            RedisUtil.addString(redis, actualParentKey, "+" + BigDecimalUtils.roundDown(parent, 2) + "%");
-        }
-    }*/
+
+    public void insert(JSONArray data){
+        String price = data.get(1).toString();
+        String volume = data.get(2).toString();
+        String time = data.get(3).toString();
+        Integer type = "bid".equals(data.get(4)) ? 0 : 1;
+        OkexDealRecord okexDealRecord = new OkexDealRecord();
+        okexDealRecord.setPrice(price);
+        okexDealRecord.setTime(DateUtils.getCurrentDateStr() + time);
+        okexDealRecord.setType(type);
+        okexDealRecord.setVolume(volume);
+        okexDealRecordService.insertSelective(okexDealRecord);
+    }
 }
