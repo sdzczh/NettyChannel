@@ -181,7 +181,7 @@ public class OKCoinServiceImpl implements WebSocketService {
             resultMap.put("price", data.get(1));
             resultMap.put("total", total);
             resultMap.put("size", data.get(2));
-            RedisUtil.addHashMap(redis, String.format(RedisKey.SUPER_ORDER, coin), resultMap, false);
+            RedisUtil.addListRight(redis, String.format(RedisKey.SUPER_ORDER, coin), resultMap);
         }
     }
 
