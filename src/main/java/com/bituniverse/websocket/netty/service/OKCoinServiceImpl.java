@@ -80,6 +80,15 @@ public class OKCoinServiceImpl implements WebSocketService {
                     String[] strArr = channel.split("_");
                     String c2 = strArr[3].toUpperCase();
                     JSONArray data = resultObj.getJSONArray("data").getJSONArray(0);
+                    //统计usdt日流通量
+                    BigDecimal usdtAmount = new BigDecimal(data.get(1).toString());
+                    String usdtAmountRedis = RedisUtil.searchHashString(redis, String.format(RedisKey.COIN_DETAILS, EnumExchange.OKEX.getExchangId(), c2), "usdt_amount");
+                    if(!"".equals(usdtAmountRedis)){
+                        usdtAmount = new BigDecimal(usdtAmountRedis).add(usdtAmount);
+                        RedisUtil.addHashString(redis, String.format(RedisKey.COIN_DETAILS, EnumExchange.OKEX.getExchangId(), c2), "usdt_amount", usdtAmount.toString());
+                    }else{
+                        RedisUtil.addHashString(redis, String.format(RedisKey.COIN_DETAILS, EnumExchange.OKEX.getExchangId(), c2), "usdt_amount", usdtAmount.toString());
+                    }
 
                     /*----------------------------------------发送最新价格广播-----------------------------------------------------------*/
                     List<String> list = new ArrayList<>();
@@ -226,14 +235,14 @@ public class OKCoinServiceImpl implements WebSocketService {
             BigDecimal parent = actual.divide(new BigDecimal(marketCap), BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100));
             RedisUtil.addString(redis, actualParentKey, "+" + BigDecimalUtils.roundDown(parent, 2) + "%");
         }
+        String priceChangeRedisKey = String.format(RedisKey.COIN_DETAILS, EnumExchange.OKEX.getExchangId(), coin);
         //详情页title 价格
-        RedisUtil.addHashString(redis, String.format(RedisKey.COIN_DETAILS, EnumExchange.OKEX.getExchangId(), coin), "price", price);
+        RedisUtil.addHashString(redis, priceChangeRedisKey, "price", price);
         //详情页title 价格变化
         String oldPrice = RedisUtil.searchString(redis, String.format(RedisKey.COIN_PRICE, EnumExchange.OKEX.getExchangId(), CoinType.getCode(coin), 1));
-        RedisUtil.addHashString(redis, String.format(RedisKey.COIN_DETAILS, EnumExchange.OKEX.getExchangId(), coin), "24hchange_price", new BigDecimal(price).subtract(new BigDecimal(oldPrice)).toString());
+        RedisUtil.addHashString(redis, priceChangeRedisKey, "24hchange_price", new BigDecimal(price).subtract(new BigDecimal(oldPrice)).toString());
         BigDecimal priceChange = new BigDecimal(price).subtract(new BigDecimal(oldPrice));
         //详情页title 价格变化百分比
-        String priceChangeRedisKey = String.format(RedisKey.COIN_DETAILS, EnumExchange.OKEX.getExchangId(), coin);
         if(priceChange.compareTo(BigDecimal.ZERO) == -1){
             priceChange = BigDecimalUtils.plusMinus(priceChange);
             BigDecimal parent = priceChange.divide(new BigDecimal(oldPrice), BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100));
@@ -244,7 +253,19 @@ public class OKCoinServiceImpl implements WebSocketService {
         }
         //当前价格折合usdt价格
         String usdtPrice = RedisUtil.searchString(redis, String.format(RedisKey.USDT_PRICE, "CNY"));
-        RedisUtil.addHashString(redis, String.format(RedisKey.COIN_DETAILS, EnumExchange.OKEX.getExchangId(), CoinType.getCode(coin)), "usdt_price", new BigDecimal(price).divide(new BigDecimal(usdtPrice), 4,  BigDecimal.ROUND_HALF_UP).toString());
+        RedisUtil.addHashString(redis, priceChangeRedisKey, "usdt_price", new BigDecimal(price).divide(new BigDecimal(usdtPrice), 4,  BigDecimal.ROUND_HALF_UP).toString());
+        //24小时最高价
+        String dayHigh = RedisUtil.searchHashString(redis, priceChangeRedisKey, "24h_high");
+        if("".equals(dayHigh) || new BigDecimal(dayHigh).compareTo(new BigDecimal(price)) == -1){
+            dayHigh = price;
+            RedisUtil.addHashString(redis, priceChangeRedisKey, "24h_high", dayHigh);
+        }
+        //24小时最低价
+        String dayLow = RedisUtil.searchHashString(redis, priceChangeRedisKey, "24h_low");
+        if("".equals(dayLow) || new BigDecimal(price).compareTo(new BigDecimal(dayLow)) == -1){
+            dayLow = price;
+            RedisUtil.addHashString(redis, priceChangeRedisKey, "24h_low", dayLow);
+        }
     }
 
     public void insert(JSONArray data, String coin, String price){
