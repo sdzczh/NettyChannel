@@ -58,9 +58,9 @@ public class OKCoinServiceImpl implements WebSocketService {
                 String channel = resultObj.getString("channel");
                 if (channel.contains("depth")) {
                     String[] strArr = channel.split("_");
-                    String c1 = strArr[3].toUpperCase();
-                    String c2 = strArr[4].toUpperCase();
-                    log.info("收到okcoin服务器数据最新深度变化【" + c1 + " - " + c2 +"】：" + resultObj.toJSONString());
+                    String c2 = strArr[3].toUpperCase();
+                    String c1 = strArr[4].toUpperCase();
+                    log.info("收到okcoin服务器数据最新深度变化【" + c2 + " - " + c1 +"】：" + resultObj.toJSONString());
                     JSONObject data = resultObj.getJSONObject("data");
 
                     /*----------------------------------------发送深度广播-----------------------------------------------------------*/
@@ -72,13 +72,13 @@ public class OKCoinServiceImpl implements WebSocketService {
                         case "ETH" : broadcastData.put("scene", EnumScene.SCENEN_DETAILS_OKEX_DEPTH_ETH);
                         default : broadcastData.put("scene", -1);
                     }*/
-                    broadcastData.put("coin", c1);
+                    broadcastData.put("coin", c2);
                     broadcastData.put("info", data);
                     broadcast.put("data", broadcastData);
                     WebsocketClientUtils.sendTextMessage(broadcast.toJSONString());
                 }else if (channel.contains("deals")) {
                     String[] strArr = channel.split("_");
-                    String c1 = strArr[3].toUpperCase();
+                    String c2 = strArr[3].toUpperCase();
                     JSONArray data = resultObj.getJSONArray("data").getJSONArray(0);
 
                     /*----------------------------------------发送最新价格广播-----------------------------------------------------------*/
@@ -88,7 +88,7 @@ public class OKCoinServiceImpl implements WebSocketService {
                     list.add("ETH");
                     for(String coin : list){
                         String price = data.get(1).toString();
-                        if(coin.equals(c1)){
+                        if(coin.equals(c2)){
                             price = "1";
                         }else {
                             String usdtPrice = RedisUtil.searchString(redis, String.format(RedisKey.USDT_PRICE, coin));
@@ -96,32 +96,32 @@ public class OKCoinServiceImpl implements WebSocketService {
                             price = BigDecimalUtils.round(bPrice, 8).toString();
                         }
                         if("CNY".equals(coin)){
-                            insert(data, c1, price);
+                            insert(data, c2, price);
                             BigDecimal total = new BigDecimal(price).multiply(new BigDecimal(data.get(2).toString()));
                             //记录超级大单
                             getSuperOrder(coin, total, data);
                             //记录24小时状态
-                            save24hState(c1, total, data);
+                            save24hState(c2, total, data, price);
                         }else{
 //                            save24hState(coin);
                         }
                         JSONObject broadcast = new JSONObject();
                         broadcast.put("action", "broadcast");
                         JSONObject broadcastData = new JSONObject();
-                        Integer c2 = CoinType.getCode(coin);
+                        Integer c1 = CoinType.getCode(coin);
                         broadcastData.put("scene", EnumScene.SCENEN_INDEX_OKEX);
                         broadcastData.put("info", price);
-                        broadcastData.put("c1", CoinType.getCode(c1));
-                        broadcastData.put("c2", c2);
+                        broadcastData.put("c2", CoinType.getCode(c2));
+                        broadcastData.put("c1", c1);
                         broadcastData.put("exchangeId", EnumExchange.OKEX.getExchangId());
                         broadcast.put("data", broadcastData);
                         WebsocketClientUtils.sendTextMessage(broadcast.toJSONString());
                     }
                 }else if (channel.contains("kline")) {
                     String[] strArr = channel.split("_");
-                    String c1 = strArr[3].toUpperCase();
-                    String c2 = strArr[4].toUpperCase();
-                    log.info("收到okcoin服务器数据最新K-line变化【" + c1 + " - " + c2 +"】：" + resultObj.toJSONString());
+                    String c2 = strArr[3].toUpperCase();
+                    String c1 = strArr[4].toUpperCase();
+                    log.info("收到okcoin服务器数据最新K-line变化【" + c2 + " - " + c1 +"】：" + resultObj.toJSONString());
                     JSONArray data = resultObj.getJSONArray("data");
                     JSONArray array = data.getJSONArray(0);
                     Long timestamp = array.getLong(0);
@@ -148,7 +148,7 @@ public class OKCoinServiceImpl implements WebSocketService {
                         default : broadcastData.put("scene", -1);
                     }*/
                     broadcastData.put("scene", EnumScene.SCENEN_DETAILS_OKEX);
-                    broadcastData.put("coin", c1);
+                    broadcastData.put("coin", c2);
                     broadcastData.put("info", params);
                     broadcast.put("data", broadcastData);
                     WebsocketClientUtils.sendTextMessage(broadcast.toJSONString());
@@ -183,7 +183,15 @@ public class OKCoinServiceImpl implements WebSocketService {
         }
     }
 
-    public void save24hState(String coin, BigDecimal total, JSONArray data) throws Exception {
+    /**
+     * 资产24小时流向
+     * @param coin  币种名称
+     * @param total 单笔总金额
+     * @param data
+     * @param price rmb价格
+     * @throws Exception
+     */
+    public void save24hState(String coin, BigDecimal total, JSONArray data, String price) throws Exception {
         String side = data.get(4).toString();
         String inKey = String.format(RedisKey.DAY_IN_ORDER, coin);
         //之前记录的今日交易买入总金额
@@ -218,6 +226,25 @@ public class OKCoinServiceImpl implements WebSocketService {
             BigDecimal parent = actual.divide(new BigDecimal(marketCap), BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100));
             RedisUtil.addString(redis, actualParentKey, "+" + BigDecimalUtils.roundDown(parent, 2) + "%");
         }
+        //详情页title 价格
+        RedisUtil.addHashString(redis, String.format(RedisKey.COIN_DETAILS, EnumExchange.OKEX.getExchangId(), coin), "price", price);
+        //详情页title 价格变化
+        String oldPrice = RedisUtil.searchString(redis, String.format(RedisKey.COIN_PRICE, EnumExchange.OKEX.getExchangId(), CoinType.getCode(coin), 1));
+        RedisUtil.addHashString(redis, String.format(RedisKey.COIN_DETAILS, EnumExchange.OKEX.getExchangId(), coin), "24hchange_price", new BigDecimal(price).subtract(new BigDecimal(oldPrice)).toString());
+        BigDecimal priceChange = new BigDecimal(price).subtract(new BigDecimal(oldPrice));
+        //详情页title 价格变化百分比
+        String priceChangeRedisKey = String.format(RedisKey.COIN_DETAILS, EnumExchange.OKEX.getExchangId(), coin);
+        if(priceChange.compareTo(BigDecimal.ZERO) == -1){
+            priceChange = BigDecimalUtils.plusMinus(priceChange);
+            BigDecimal parent = priceChange.divide(new BigDecimal(oldPrice), BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100));
+            RedisUtil.addHashString(redis, priceChangeRedisKey, "percent_change_24h", "-" + BigDecimalUtils.roundDown(parent, 2) + "%");
+        }else{
+            BigDecimal parent = priceChange.divide(new BigDecimal(oldPrice), BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100));
+            RedisUtil.addHashString(redis, priceChangeRedisKey, "percent_change_24h", "+" + BigDecimalUtils.roundDown(parent, 2) + "%");
+        }
+        //当前价格折合usdt价格
+        String usdtPrice = RedisUtil.searchString(redis, String.format(RedisKey.USDT_PRICE, "CNY"));
+        RedisUtil.addHashString(redis, String.format(RedisKey.COIN_DETAILS, EnumExchange.OKEX.getExchangId(), CoinType.getCode(coin)), "usdt_price", new BigDecimal(price).divide(new BigDecimal(usdtPrice), 4,  BigDecimal.ROUND_HALF_UP).toString());
     }
 
     public void insert(JSONArray data, String coin, String price){
