@@ -81,4 +81,11 @@ public interface CoinDataService {
      * @date: 2018-12-14 22:30:09
      **/ 
     int selectCount(Map<Object, Object> param);
+
+    /**
+     * 保存或更新
+     * @param record
+     * @return
+     */
+    void saveOrUpdate(CoinData record);
 }

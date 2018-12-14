@@ -66,4 +66,13 @@ public class CoinDataServiceImpl implements CoinDataService {
     public int selectCount(Map<Object, Object> param) {
         return this.coinDataMapper.selectCount(param);
     }
+
+    @Override
+    public void saveOrUpdate(CoinData record) {
+        if(record.getId()==null){
+            coinDataMapper.insert(record);
+        }else{
+            coinDataMapper.updateByPrimaryKey(record);
+        }
+    }
 }

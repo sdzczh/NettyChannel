@@ -298,7 +298,7 @@ public class OKCoinServiceImpl implements WebSocketService {
         coinData.setDayLow(dayLow);
         coinData.setDayVolume(usdtAmountRedis);
         coinData.setMarketCap(marketCap);
-        coinDataService.insertSelective(coinData);
+        coinDataService.saveOrUpdate(coinData);
     }
 
     public void insert(JSONArray data, String coin, String price){
