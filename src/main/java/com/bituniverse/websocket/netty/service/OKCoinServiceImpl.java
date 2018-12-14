@@ -3,6 +3,8 @@ package com.bituniverse.websocket.netty.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.bituniverse.websocket.entity.CoinData;
+import com.bituniverse.websocket.service.CoinDataService;
 import com.bituniverse.websocket.service.OkexDealRecordService;
 import com.bituniverse.websocket.utils.*;
 import com.bituniverse.websocket.entity.OkexDealRecord;
@@ -40,6 +42,8 @@ public class OKCoinServiceImpl implements WebSocketService {
     private RedisTemplate<String, String> redis;
     @Autowired
     private OkexDealRecordService okexDealRecordService;
+    @Autowired
+    private CoinDataService coinDataService;
 
     static {
         //ClassPathXmlApplicationContext appCtx = new ClassPathXmlApplicationContext("applicationContext.xml");
@@ -112,7 +116,7 @@ public class OKCoinServiceImpl implements WebSocketService {
                             //记录超级大单
                             getSuperOrder(coin, total, data);
                             //记录24小时状态
-                            save24hState(c2, total, data, price);
+                            save24hState(c2, total, data, price, usdtAmountRedis);
                         }else{
 //                            save24hState(coin);
                         }
@@ -200,9 +204,20 @@ public class OKCoinServiceImpl implements WebSocketService {
      * @param total 单笔总金额
      * @param data
      * @param price rmb价格
+     * @param usdtAmountRedis
      * @throws Exception
      */
-    public void save24hState(String coin, BigDecimal total, JSONArray data, String price) throws Exception {
+    public void save24hState(String coin, BigDecimal total, JSONArray data, String price, String usdtAmountRedis) throws Exception {
+        Map<Object, Object> map = new HashMap<>();
+        map.put("exchangeid", EnumExchange.OKEX.getExchangId());
+        map.put("coin", coin);
+        List<CoinData> list = coinDataService.selectAll(map);
+        CoinData coinData;
+        if(list != null && list.size() != 0){
+            coinData = list.get(0);
+        }else {
+            coinData = new CoinData();
+        }
         String side = data.get(4).toString();
         String inKey = String.format(RedisKey.DAY_IN_ORDER, coin);
         //之前记录的今日交易买入总金额
@@ -247,17 +262,21 @@ public class OKCoinServiceImpl implements WebSocketService {
         RedisUtil.addHashString(redis, priceChangeRedisKey, "24hchange_price", new BigDecimal(price).subtract(new BigDecimal(oldPrice)).toString());
         BigDecimal priceChange = new BigDecimal(price).subtract(new BigDecimal(oldPrice));
         //详情页title 价格变化百分比
+        BigDecimal parent = new BigDecimal(0);
         if(priceChange.compareTo(BigDecimal.ZERO) == -1){
             priceChange = BigDecimalUtils.plusMinus(priceChange);
-            BigDecimal parent = priceChange.divide(new BigDecimal(oldPrice), BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100));
-            RedisUtil.addHashString(redis, priceChangeRedisKey, "percent_change_24h", "-" + BigDecimalUtils.roundDown(parent, 2) + "%");
+            parent = BigDecimalUtils.roundDown(priceChange.divide(new BigDecimal(oldPrice), BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100)), 2);
+            RedisUtil.addHashString(redis, priceChangeRedisKey, "percent_change_24h", "-" + parent + "%");
+            coinData.setPriceChangePercent("-" + parent + "%");
         }else{
-            BigDecimal parent = priceChange.divide(new BigDecimal(oldPrice), BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100));
-            RedisUtil.addHashString(redis, priceChangeRedisKey, "percent_change_24h", "+" + BigDecimalUtils.roundDown(parent, 2) + "%");
+            parent = BigDecimalUtils.roundDown(priceChange.divide(new BigDecimal(oldPrice), BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100)), 2);
+            RedisUtil.addHashString(redis, priceChangeRedisKey, "percent_change_24h", "+" + parent + "%");
+            coinData.setPriceChangePercent("+" + parent + "%");
         }
         //当前价格折合usdt价格
         String usdtPrice = RedisUtil.searchString(redis, String.format(RedisKey.USDT_PRICE, "CNY"));
-        RedisUtil.addHashString(redis, priceChangeRedisKey, "usdt_price", new BigDecimal(price).divide(new BigDecimal(usdtPrice), 4,  BigDecimal.ROUND_HALF_UP).toString());
+        usdtPrice = new BigDecimal(price).divide(new BigDecimal(usdtPrice), 4,  BigDecimal.ROUND_HALF_UP).toString();
+        RedisUtil.addHashString(redis, priceChangeRedisKey, "usdt_price", usdtPrice);
         //24小时最高价
         String dayHigh = RedisUtil.searchHashString(redis, priceChangeRedisKey, "24h_high");
         if("".equals(dayHigh) || dayHigh == null  || new BigDecimal(dayHigh).compareTo(new BigDecimal(price)) == -1){
@@ -270,6 +289,16 @@ public class OKCoinServiceImpl implements WebSocketService {
             dayLow = price;
             RedisUtil.addHashString(redis, priceChangeRedisKey, "24h_low", dayLow);
         }
+        coinData.setCoin(coin);
+        coinData.setExchangeid(EnumExchange.OKEX.getExchangId());
+        coinData.setPrice(price);
+        coinData.setPriceChange(priceChange.toString());
+        coinData.setPriceUsdt(usdtPrice);
+        coinData.setDayHigh(dayHigh);
+        coinData.setDayLow(dayLow);
+        coinData.setDayVolume(usdtAmountRedis);
+        coinData.setMarketCap(marketCap);
+        coinDataService.insertSelective(coinData);
     }
 
     public void insert(JSONArray data, String coin, String price){
