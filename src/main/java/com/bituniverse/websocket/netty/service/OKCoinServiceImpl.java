@@ -24,6 +24,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.bituniverse.websocket.variables.RedisKey.COIN_MARKET_CAP;
+
 /**
  * 订阅信息处理类需要实现WebSocketService接口
  *
@@ -225,7 +227,10 @@ public class OKCoinServiceImpl implements WebSocketService {
         BigDecimal actual = new BigDecimal(oldIn).subtract(new BigDecimal(oldOut));
         String actualKey = String.format(RedisKey.DAY_ACTUAL_ORDER, coin);
         RedisUtil.addString(redis, actualKey, actual.toString());
-        String marketCap = RedisUtil.searchString(redis, String.format(RedisKey.COIN_MARKET_CAP, coin));
+        String priceChangeRedisKey = String.format(RedisKey.COIN_DETAILS, EnumExchange.OKEX.getExchangId(), coin);
+        //市值
+        String marketCap = RedisUtil.searchHashString(redis, priceChangeRedisKey, "marketCap");
+        //24小时净流入百分比
         String actualParentKey = String.format(RedisKey.DAY_ACTUALPARENT_ORDER, coin);
         if(actual.compareTo(BigDecimal.ZERO) == -1){
             actual = BigDecimalUtils.plusMinus(actual);
@@ -235,7 +240,6 @@ public class OKCoinServiceImpl implements WebSocketService {
             BigDecimal parent = actual.divide(new BigDecimal(marketCap), BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100));
             RedisUtil.addString(redis, actualParentKey, "+" + BigDecimalUtils.roundDown(parent, 2) + "%");
         }
-        String priceChangeRedisKey = String.format(RedisKey.COIN_DETAILS, EnumExchange.OKEX.getExchangId(), coin);
         //详情页title 价格
         RedisUtil.addHashString(redis, priceChangeRedisKey, "price", price);
         //详情页title 价格变化
