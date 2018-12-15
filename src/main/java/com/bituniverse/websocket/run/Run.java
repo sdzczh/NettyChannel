@@ -26,11 +26,11 @@ public class Run {
         client.addChannel("ok_sub_spot_eth_usdt_kline_1min");
         // 添加订阅btc_usd, eth_usd 深度
         client.addChannel("ok_sub_spot_btc_usdt_depth");
-        client.addChannel("ok_sub_spot_bch_btc_depth");
+        client.addChannel("ok_sub_spot_bch_btc_depth");*/
 //        client.addChannel("ok_sub_spot_eth_usdt_depth");
         //订阅最新价格
         client.addChannel("ok_sub_spot_btc_usdt_deals");
-        client.addChannel("ok_sub_spot_eth_usdt_deals");*/
+        client.addChannel("ok_sub_spot_eth_usdt_deals");
 
     }
 }

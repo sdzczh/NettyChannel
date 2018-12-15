@@ -184,7 +184,6 @@ public class OKCoinServiceImpl implements WebSocketService {
      */
     private void getFundDistribution(String c2, BigDecimal total, JSONArray data) {
         String redisKey = String.format(RedisKey.COIN_FUND_DISTRIBUTION, EnumExchange.OKEX.getExchangId(), c2);
-        String detailsKey = String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2);
         //平均交易额
         String average = RedisUtil.searchHashString(redis, redisKey, "average");
         //交易笔数
@@ -198,51 +197,59 @@ public class OKCoinServiceImpl implements WebSocketService {
             Map<String, Object> params = new HashMap<>();
             //小单
             if(total.compareTo(averageBigdecimal) == -1){
-                String small = RedisUtil.searchString(redis, detailsKey + ":small");
-                String num = RedisUtil.searchString(redis, detailsKey + ":num");
+                String small = RedisUtil.searchString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "small", type));
+                String num = RedisUtil.searchString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "num", type));
                 if(!StrUtils.isBlank(small) && !StrUtils.isBlank(num)) {
                     BigDecimal smallBig = new BigDecimal(small);
                     BigDecimal numBig = new BigDecimal(num);
-                    RedisUtil.addString(redis, detailsKey + ":small", smallBig.add(total).toString());
-                    RedisUtil.addString(redis, detailsKey + ":num", numBig.add(new BigDecimal(1)).toString());
+                    RedisUtil.addString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "small", type), smallBig.add(total).toString());
+                    RedisUtil.addString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "num", type), numBig.add(new BigDecimal(1)).toString());
                 }else{
-                    RedisUtil.addString(redis, detailsKey + ":small", total.toString());
-                    RedisUtil.addString(redis, detailsKey + ":num", "1");
+                    RedisUtil.addString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "small", type), total.toString());
+                    RedisUtil.addString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "num", type), "1");
                 }
             }
             //大单
             else if(averageBigdecimal.multiply(new BigDecimal(10)).compareTo(total) == -1){
-                String big = RedisUtil.searchString(redis, detailsKey + ":big");
-                String num = RedisUtil.searchString(redis, detailsKey + ":num");
+                String big = RedisUtil.searchString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "big", type));
+                String num = RedisUtil.searchString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "num", type));
                 if(!StrUtils.isBlank(big) && !StrUtils.isBlank(num)) {
                     BigDecimal bigBig = new BigDecimal(big);
                     BigDecimal numBig = new BigDecimal(num);
-                    RedisUtil.addString(redis, detailsKey + ":big", bigBig.add(total).toString());
-                    RedisUtil.addString(redis, detailsKey + ":num", numBig.add(new BigDecimal(1)).toString());
+                    RedisUtil.addString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "big", type), bigBig.add(total).toString());
+                    RedisUtil.addString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "num", type), numBig.add(new BigDecimal(1)).toString());
                 }else{
-                    RedisUtil.addString(redis, detailsKey + ":big", total.toString());
-                    RedisUtil.addString(redis, detailsKey + ":num", "1");
+                    RedisUtil.addString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "big", type), total.toString());
+                    RedisUtil.addString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "num", type), "1");
                 }
             }
             //中单
             else{
-                String mid = RedisUtil.searchString(redis, detailsKey + ":mid");
-                String num = RedisUtil.searchString(redis, detailsKey + ":num");
+                String mid = RedisUtil.searchString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "mid", type));
+                String num = RedisUtil.searchString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "num", type));
                 if(!StrUtils.isBlank(mid) && !StrUtils.isBlank(num)) {
                     BigDecimal midBig = new BigDecimal(mid);
                     BigDecimal numBig = new BigDecimal(num);
-                    RedisUtil.addString(redis, detailsKey + ":mid", midBig.add(total).toString());
-                    RedisUtil.addString(redis, detailsKey + ":num", numBig.add(new BigDecimal(1)).toString());
+                    RedisUtil.addString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "mid", type), midBig.add(total).toString());
+                    RedisUtil.addString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "num", type), numBig.add(new BigDecimal(1)).toString());
                 }else{
-                    RedisUtil.addString(redis, detailsKey + ":mid", total.toString());
-                    RedisUtil.addString(redis, detailsKey + ":num", "1");
+                    RedisUtil.addString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "mid", type), total.toString());
+                    RedisUtil.addString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "num", type), "1");
                 }
+            }
+            //单项成交额
+            String sum = RedisUtil.searchString(redis,String.format(RedisKey.COIN_FUND_DISTRIBUTION_TOTAL, EnumExchange.OKEX.getExchangId(), c2, type));
+            if(StrUtils.isBlank(sum)){
+                RedisUtil.addString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_TOTAL, EnumExchange.OKEX.getExchangId(), c2, type), total.toString());
+            }else {
+                RedisUtil.addString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_TOTAL, EnumExchange.OKEX.getExchangId(), c2, type), new BigDecimal(sum).add(total).toString());
             }
             //交易额均值
             total = total.add(averageBigdecimal.multiply(amountBigdecimal)).divide(amountBigdecimal.add(new BigDecimal(1)),8, BigDecimal.ROUND_HALF_UP);
             RedisUtil.addHashString(redis, redisKey, "average", total.toString());
             //交易笔数
             RedisUtil.addHashString(redis, redisKey, "amount", amountBigdecimal.add(new BigDecimal(1)).toString());
+
         }else{
             RedisUtil.addHashString(redis, redisKey, "average", total.toString());
             RedisUtil.addHashString(redis, redisKey, "amount", "1");
