@@ -4,8 +4,10 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.bituniverse.websocket.entity.CoinData;
+import com.bituniverse.websocket.entity.SuperOrder;
 import com.bituniverse.websocket.service.CoinDataService;
 import com.bituniverse.websocket.service.OkexDealRecordService;
+import com.bituniverse.websocket.service.SuperOrderService;
 import com.bituniverse.websocket.utils.*;
 import com.bituniverse.websocket.entity.OkexDealRecord;
 import com.bituniverse.websocket.enums.CoinType;
@@ -44,6 +46,8 @@ public class OKCoinServiceImpl implements WebSocketService {
     private OkexDealRecordService okexDealRecordService;
     @Autowired
     private CoinDataService coinDataService;
+    @Autowired
+    private SuperOrderService superOrderService;
 
     static {
         //ClassPathXmlApplicationContext appCtx = new ClassPathXmlApplicationContext("applicationContext.xml");
@@ -269,9 +273,21 @@ public class OKCoinServiceImpl implements WebSocketService {
         if(total.compareTo(min) == -1){
             return;
         }else{
+            //插入数据库
+            SuperOrder superOrder = new SuperOrder();
+            BigDecimal price = new BigDecimal(data.get(1).toString()).multiply(new BigDecimal(usdtPrice));
+            superOrder.setCoin(coin);
+            superOrder.setExchangeid(EnumExchange.OKEX.getExchangId());
+            superOrder.setPrice(price.toString());
+            superOrder.setSide(data.get(4).toString());
+            superOrder.setTotal(total.toString());
+            superOrder.setSize(data.get(2).toString());
+            superOrder.setTime(data.get(3).toString());
+            superOrderService.insertSelective(superOrder);
+            //写入缓存
             resultMap.put("time", data.get(3));
             resultMap.put("side", data.get(4));
-            resultMap.put("price", new BigDecimal(data.get(1).toString()).multiply(new BigDecimal(usdtPrice)).toString());
+            resultMap.put("price",price.toString());
             resultMap.put("total", total);
             resultMap.put("size", data.get(2));
             RedisUtil.addListRight(redis, String.format(RedisKey.SUPER_ORDER, EnumExchange.OKEX.getExchangId(), coin), resultMap);
