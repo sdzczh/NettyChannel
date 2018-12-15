@@ -238,9 +238,10 @@ public class OKCoinServiceImpl implements WebSocketService {
                     RedisUtil.addString(redis, detailsKey + ":num", "1");
                 }
             }
-
-            total = total.add(averageBigdecimal).divide(amountBigdecimal.add(new BigDecimal(1)),8, BigDecimal.ROUND_HALF_UP);
+            //交易额均值
+            total = total.add(averageBigdecimal.multiply(amountBigdecimal)).divide(amountBigdecimal.add(new BigDecimal(1)),8, BigDecimal.ROUND_HALF_UP);
             RedisUtil.addHashString(redis, redisKey, "average", total.toString());
+            //交易笔数
             RedisUtil.addHashString(redis, redisKey, "amount", amountBigdecimal.add(new BigDecimal(1)).toString());
         }else{
             RedisUtil.addHashString(redis, redisKey, "average", total.toString());
