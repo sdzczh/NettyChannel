@@ -101,12 +101,13 @@ public class OKCoinServiceImpl implements WebSocketService {
                     list.add("CNY");
                     list.add("BTC");
                     list.add("ETH");
+                    String usdtPrice = "";
                     for(String coin : list){
                         String price = data.get(1).toString();
                         if(coin.equals(c2)){
                             price = "1";
                         }else {
-                            String usdtPrice = RedisUtil.searchString(redis, String.format(RedisKey.USDT_PRICE, coin));
+                            usdtPrice = RedisUtil.searchString(redis, String.format(RedisKey.USDT_PRICE, coin));
                             BigDecimal bPrice = new BigDecimal(usdtPrice).multiply(new BigDecimal(price));
                             price = BigDecimalUtils.round(bPrice, 8).toString();
                         }
@@ -114,7 +115,7 @@ public class OKCoinServiceImpl implements WebSocketService {
                             insert(data, c2, price);
                             BigDecimal total = new BigDecimal(price).multiply(new BigDecimal(data.get(2).toString()));
                             //记录超级大单
-                            getSuperOrder(c2, total, data);
+                            getSuperOrder(c2, total, data, usdtPrice);
                             //记录24小时状态
                             save24hState(c2, total, data, price, usdtAmountRedis);
                             getFundDistribution(c2, total, data);
@@ -194,7 +195,6 @@ public class OKCoinServiceImpl implements WebSocketService {
         if(!StrUtils.isBlank(average) && !StrUtils.isBlank(amount)){
             BigDecimal averageBigdecimal = new BigDecimal(average);
             BigDecimal amountBigdecimal = new BigDecimal(amount);
-            Map<String, Object> params = new HashMap<>();
             //小单
             if(total.compareTo(averageBigdecimal) == -1){
                 String small = RedisUtil.searchString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "small", type));
@@ -261,8 +261,9 @@ public class OKCoinServiceImpl implements WebSocketService {
      * @param coin
      * @param total
      * @param data
+     * @param usdtPrice
      */
-    public void getSuperOrder(String coin, BigDecimal total, JSONArray data) {
+    public void getSuperOrder(String coin, BigDecimal total, JSONArray data, String usdtPrice) {
         Map<String, Object> resultMap = new HashMap<>();
         BigDecimal min = new BigDecimal("800000");
         if(total.compareTo(min) == -1){
@@ -270,7 +271,7 @@ public class OKCoinServiceImpl implements WebSocketService {
         }else{
             resultMap.put("time", data.get(3));
             resultMap.put("side", data.get(4));
-            resultMap.put("price", data.get(1));
+            resultMap.put("price", new BigDecimal(data.get(1).toString()).multiply(new BigDecimal(usdtPrice)).toString());
             resultMap.put("total", total);
             resultMap.put("size", data.get(2));
             RedisUtil.addListRight(redis, String.format(RedisKey.SUPER_ORDER, EnumExchange.OKEX.getExchangId(), coin), resultMap);
