@@ -24,8 +24,8 @@ public class RedisKey {
 	//币对最新价格  交易所：交易币: 计价币  c2:c1
 	public static final String COIN_PRICE = "bituniverse:price:%s:%s:%s";
 
-	//超级大单
-	public static final String SUPER_ORDER = "bituniverse:superOrder:%s";
+	//超级大单 交易所：交易币 (c2)
+	public static final String SUPER_ORDER = "bituniverse:superOrder:%s:%s";
 	//24小时流入
 	public static final String DAY_IN_ORDER = "bituniverse:dayState:in:%s";
 	//24小时流出

@@ -114,7 +114,7 @@ public class OKCoinServiceImpl implements WebSocketService {
                             insert(data, c2, price);
                             BigDecimal total = new BigDecimal(price).multiply(new BigDecimal(data.get(2).toString()));
                             //记录超级大单
-                            getSuperOrder(coin, total, data);
+                            getSuperOrder(c2, total, data);
                             //记录24小时状态
                             save24hState(c2, total, data, price, usdtAmountRedis);
                             getFundDistribution(c2, total, data);
@@ -273,7 +273,7 @@ public class OKCoinServiceImpl implements WebSocketService {
             resultMap.put("price", data.get(1));
             resultMap.put("total", total);
             resultMap.put("size", data.get(2));
-            RedisUtil.addListRight(redis, String.format(RedisKey.SUPER_ORDER, coin), resultMap);
+            RedisUtil.addListRight(redis, String.format(RedisKey.SUPER_ORDER, EnumExchange.OKEX.getExchangId(), coin), resultMap);
         }
     }
 
