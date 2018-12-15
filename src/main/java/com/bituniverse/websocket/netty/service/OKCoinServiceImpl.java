@@ -117,8 +117,7 @@ public class OKCoinServiceImpl implements WebSocketService {
                             getSuperOrder(coin, total, data);
                             //记录24小时状态
                             save24hState(c2, total, data, price, usdtAmountRedis);
-                        }else{
-//                            save24hState(coin);
+                            getFundDistribution(c2, total, data);
                         }
                         JSONObject broadcast = new JSONObject();
                         broadcast.put("action", "broadcast");
@@ -174,6 +173,77 @@ public class OKCoinServiceImpl implements WebSocketService {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * 资金分布饼形图
+     * @param c2 当前币种
+     * @param total 成交额
+     * @param data
+     */
+    private void getFundDistribution(String c2, BigDecimal total, JSONArray data) {
+        String redisKey = String.format(RedisKey.COIN_FUND_DISTRIBUTION, EnumExchange.OKEX.getExchangId(), c2);
+        String detailsKey = String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2);
+        //平均交易额
+        String average = RedisUtil.searchHashString(redis, redisKey, "average");
+        //交易笔数
+        String amount = RedisUtil.searchHashString(redis, redisKey, "amount");
+        //交易类型 0买 1卖
+        String side = data.get(4).toString();
+        Integer type = side.equals("bid") ? 0 : 1;
+        if(!StrUtils.isBlank(average) && !StrUtils.isBlank(amount)){
+            BigDecimal averageBigdecimal = new BigDecimal(average);
+            BigDecimal amountBigdecimal = new BigDecimal(amount);
+            Map<String, Object> params = new HashMap<>();
+            //小单
+            if(total.compareTo(averageBigdecimal) == -1){
+                String small = RedisUtil.searchString(redis, String.format(detailsKey, "small"));
+                String num = RedisUtil.searchString(redis, String.format(detailsKey, "num"));
+                if(!StrUtils.isBlank(small) && !StrUtils.isBlank(num)) {
+                    BigDecimal smallBig = new BigDecimal(small);
+                    BigDecimal numBig = new BigDecimal(num);
+                    RedisUtil.addString(redis, String.format(detailsKey, "small"), smallBig.add(total).toString());
+                    RedisUtil.addString(redis, String.format(detailsKey, "num"), numBig.add(new BigDecimal(1)).toString());
+                }else{
+                    RedisUtil.addString(redis, String.format(detailsKey, "small"), total.toString());
+                    RedisUtil.addString(redis, String.format(detailsKey, "num"), "1");
+                }
+            }
+            //大单
+            else if(averageBigdecimal.multiply(new BigDecimal(10)).compareTo(total) == -1){
+                String big = RedisUtil.searchString(redis, String.format(detailsKey, "big"));
+                String num = RedisUtil.searchString(redis, String.format(detailsKey, "num"));
+                if(!StrUtils.isBlank(big) && !StrUtils.isBlank(num)) {
+                    BigDecimal bigBig = new BigDecimal(big);
+                    BigDecimal numBig = new BigDecimal(num);
+                    RedisUtil.addString(redis, String.format(detailsKey, "big"), bigBig.add(total).toString());
+                    RedisUtil.addString(redis, String.format(detailsKey, "num"), numBig.add(new BigDecimal(1)).toString());
+                }else{
+                    RedisUtil.addString(redis, String.format(detailsKey, "big"), total.toString());
+                    RedisUtil.addString(redis, String.format(detailsKey, "num"), "1");
+                }
+            }
+            //中单
+            else{
+                String mid = RedisUtil.searchString(redis, String.format(detailsKey, "mid"));
+                String num = RedisUtil.searchString(redis, String.format(detailsKey, "num"));
+                if(!StrUtils.isBlank(mid) && !StrUtils.isBlank(num)) {
+                    BigDecimal midBig = new BigDecimal(mid);
+                    BigDecimal numBig = new BigDecimal(num);
+                    RedisUtil.addString(redis, String.format(detailsKey, "mid"), midBig.add(total).toString());
+                    RedisUtil.addString(redis, String.format(detailsKey, "num"), numBig.add(new BigDecimal(1)).toString());
+                }else{
+                    RedisUtil.addString(redis, String.format(detailsKey, "mid"), total.toString());
+                    RedisUtil.addString(redis, String.format(detailsKey, "num"), "1");
+                }
+            }
+
+            total = total.add(averageBigdecimal).divide(amountBigdecimal.add(new BigDecimal(1)),8, BigDecimal.ROUND_HALF_UP);
+            RedisUtil.addHashString(redis, redisKey, "average", total.toString());
+        }else{
+            RedisUtil.addHashString(redis, redisKey, "average", total.toString());
+            RedisUtil.addHashString(redis, redisKey, "amount", "1");
         }
     }
 
@@ -289,6 +359,8 @@ public class OKCoinServiceImpl implements WebSocketService {
             dayLow = price;
             RedisUtil.addHashString(redis, priceChangeRedisKey, "24h_low", dayLow);
         }
+
+        //存入coinData对象到数据库
         coinData.setCoin(coin);
         coinData.setExchangeid(EnumExchange.OKEX.getExchangId());
         coinData.setPrice(price);
