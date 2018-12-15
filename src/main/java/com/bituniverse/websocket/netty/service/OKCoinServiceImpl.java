@@ -198,44 +198,44 @@ public class OKCoinServiceImpl implements WebSocketService {
             Map<String, Object> params = new HashMap<>();
             //小单
             if(total.compareTo(averageBigdecimal) == -1){
-                String small = RedisUtil.searchString(redis, String.format(detailsKey, "small"));
-                String num = RedisUtil.searchString(redis, String.format(detailsKey, "num"));
+                String small = RedisUtil.searchString(redis, detailsKey + ":small");
+                String num = RedisUtil.searchString(redis, detailsKey + ":num");
                 if(!StrUtils.isBlank(small) && !StrUtils.isBlank(num)) {
                     BigDecimal smallBig = new BigDecimal(small);
                     BigDecimal numBig = new BigDecimal(num);
-                    RedisUtil.addString(redis, String.format(detailsKey, "small"), smallBig.add(total).toString());
-                    RedisUtil.addString(redis, String.format(detailsKey, "num"), numBig.add(new BigDecimal(1)).toString());
+                    RedisUtil.addString(redis, detailsKey + ":small", smallBig.add(total).toString());
+                    RedisUtil.addString(redis, detailsKey + ":num", numBig.add(new BigDecimal(1)).toString());
                 }else{
-                    RedisUtil.addString(redis, String.format(detailsKey, "small"), total.toString());
-                    RedisUtil.addString(redis, String.format(detailsKey, "num"), "1");
+                    RedisUtil.addString(redis, detailsKey + ":small", total.toString());
+                    RedisUtil.addString(redis, detailsKey + ":num", "1");
                 }
             }
             //大单
             else if(averageBigdecimal.multiply(new BigDecimal(10)).compareTo(total) == -1){
-                String big = RedisUtil.searchString(redis, String.format(detailsKey, "big"));
-                String num = RedisUtil.searchString(redis, String.format(detailsKey, "num"));
+                String big = RedisUtil.searchString(redis, detailsKey + ":big");
+                String num = RedisUtil.searchString(redis, detailsKey + ":num");
                 if(!StrUtils.isBlank(big) && !StrUtils.isBlank(num)) {
                     BigDecimal bigBig = new BigDecimal(big);
                     BigDecimal numBig = new BigDecimal(num);
-                    RedisUtil.addString(redis, String.format(detailsKey, "big"), bigBig.add(total).toString());
-                    RedisUtil.addString(redis, String.format(detailsKey, "num"), numBig.add(new BigDecimal(1)).toString());
+                    RedisUtil.addString(redis, detailsKey + ":big", bigBig.add(total).toString());
+                    RedisUtil.addString(redis, detailsKey + ":num", numBig.add(new BigDecimal(1)).toString());
                 }else{
-                    RedisUtil.addString(redis, String.format(detailsKey, "big"), total.toString());
-                    RedisUtil.addString(redis, String.format(detailsKey, "num"), "1");
+                    RedisUtil.addString(redis, detailsKey + ":big", total.toString());
+                    RedisUtil.addString(redis, detailsKey + ":num", "1");
                 }
             }
             //中单
             else{
-                String mid = RedisUtil.searchString(redis, String.format(detailsKey, "mid"));
-                String num = RedisUtil.searchString(redis, String.format(detailsKey, "num"));
+                String mid = RedisUtil.searchString(redis, detailsKey + ":mid");
+                String num = RedisUtil.searchString(redis, detailsKey + ":num");
                 if(!StrUtils.isBlank(mid) && !StrUtils.isBlank(num)) {
                     BigDecimal midBig = new BigDecimal(mid);
                     BigDecimal numBig = new BigDecimal(num);
-                    RedisUtil.addString(redis, String.format(detailsKey, "mid"), midBig.add(total).toString());
-                    RedisUtil.addString(redis, String.format(detailsKey, "num"), numBig.add(new BigDecimal(1)).toString());
+                    RedisUtil.addString(redis, detailsKey + ":mid", midBig.add(total).toString());
+                    RedisUtil.addString(redis, detailsKey + ":num", numBig.add(new BigDecimal(1)).toString());
                 }else{
-                    RedisUtil.addString(redis, String.format(detailsKey, "mid"), total.toString());
-                    RedisUtil.addString(redis, String.format(detailsKey, "num"), "1");
+                    RedisUtil.addString(redis, detailsKey + ":mid", total.toString());
+                    RedisUtil.addString(redis, detailsKey + ":num", "1");
                 }
             }
 
