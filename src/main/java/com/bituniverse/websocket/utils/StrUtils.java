@@ -29,6 +29,18 @@ public class StrUtils {
 		String dest = m.replaceAll("");
 		return dest;
 	}
+	/**
+	 * 批量判断字符串是否为空
+	 * @param strs
+	 * @return 为空 true
+	 */
+	public static boolean isNotEmptyBatch(String... strs) {
+		for (String str : strs) {
+			if (str == null || "".equals(str))
+				return true;
+		}
+		return false;
+	}
 	
 	/**
 	 * @描述 字符串空值判断<br>

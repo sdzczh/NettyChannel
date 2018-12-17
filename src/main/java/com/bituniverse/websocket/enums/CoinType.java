@@ -28,7 +28,16 @@ public enum CoinType {
             default:
     			return null;
     	}
-    	
+    }
+    public static String getName(Integer id){
+    	switch(id){
+    		case 0 : return "USDT";
+            case 1 : return "CNY";
+            case 2 : return "BTC";
+            case 3 : return "ETH";
+            default:
+    			return null;
+    	}
     }
 
 

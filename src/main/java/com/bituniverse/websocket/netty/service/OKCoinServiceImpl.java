@@ -3,13 +3,9 @@ package com.bituniverse.websocket.netty.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.bituniverse.websocket.entity.CoinData;
-import com.bituniverse.websocket.entity.SuperOrder;
-import com.bituniverse.websocket.service.CoinDataService;
-import com.bituniverse.websocket.service.OkexDealRecordService;
-import com.bituniverse.websocket.service.SuperOrderService;
+import com.bituniverse.websocket.entity.*;
+import com.bituniverse.websocket.service.*;
 import com.bituniverse.websocket.utils.*;
-import com.bituniverse.websocket.entity.OkexDealRecord;
 import com.bituniverse.websocket.enums.CoinType;
 import com.bituniverse.websocket.enums.EnumExchange;
 import com.bituniverse.websocket.enums.EnumScene;
@@ -28,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.bituniverse.websocket.variables.RedisKey.COIN_MARKET_CAP;
 
 /**
  * 订阅信息处理类需要实现WebSocketService接口
@@ -48,6 +43,12 @@ public class OKCoinServiceImpl implements WebSocketService {
     private CoinDataService coinDataService;
     @Autowired
     private SuperOrderService superOrderService;
+    @Autowired
+    private CoinPriceService coinPriceService;
+    @Autowired
+    private DayStateService dayStateService;
+    @Autowired
+    private CapDistributionService capDistributionService;
 
     static {
         //ClassPathXmlApplicationContext appCtx = new ClassPathXmlApplicationContext("applicationContext.xml");
@@ -201,7 +202,8 @@ public class OKCoinServiceImpl implements WebSocketService {
             BigDecimal amountBigdecimal = new BigDecimal(amount);
             //小单
             if(total.compareTo(averageBigdecimal) == -1){
-                String small = RedisUtil.searchString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "small", type));
+                common(c2, "small", type, total);
+                /*String small = RedisUtil.searchString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "small", type));
                 String num = RedisUtil.searchString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "num", type));
                 if(!StrUtils.isBlank(small) && !StrUtils.isBlank(num)) {
                     BigDecimal smallBig = new BigDecimal(small);
@@ -211,35 +213,15 @@ public class OKCoinServiceImpl implements WebSocketService {
                 }else{
                     RedisUtil.addString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "small", type), total.toString());
                     RedisUtil.addString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "num", type), "1");
-                }
+                }*/
             }
             //大单
             else if(averageBigdecimal.multiply(new BigDecimal(10)).compareTo(total) == -1){
-                String big = RedisUtil.searchString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "big", type));
-                String num = RedisUtil.searchString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "num", type));
-                if(!StrUtils.isBlank(big) && !StrUtils.isBlank(num)) {
-                    BigDecimal bigBig = new BigDecimal(big);
-                    BigDecimal numBig = new BigDecimal(num);
-                    RedisUtil.addString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "big", type), bigBig.add(total).toString());
-                    RedisUtil.addString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "num", type), numBig.add(new BigDecimal(1)).toString());
-                }else{
-                    RedisUtil.addString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "big", type), total.toString());
-                    RedisUtil.addString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "num", type), "1");
-                }
+                common(c2, "big", type, total);
             }
             //中单
             else{
-                String mid = RedisUtil.searchString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "mid", type));
-                String num = RedisUtil.searchString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "num", type));
-                if(!StrUtils.isBlank(mid) && !StrUtils.isBlank(num)) {
-                    BigDecimal midBig = new BigDecimal(mid);
-                    BigDecimal numBig = new BigDecimal(num);
-                    RedisUtil.addString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "mid", type), midBig.add(total).toString());
-                    RedisUtil.addString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "num", type), numBig.add(new BigDecimal(1)).toString());
-                }else{
-                    RedisUtil.addString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "mid", type), total.toString());
-                    RedisUtil.addString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "num", type), "1");
-                }
+                common(c2, "mid", type, total);
             }
             //单项成交额
             String sum = RedisUtil.searchString(redis,String.format(RedisKey.COIN_FUND_DISTRIBUTION_TOTAL, EnumExchange.OKEX.getExchangId(), c2, type));
@@ -258,6 +240,42 @@ public class OKCoinServiceImpl implements WebSocketService {
             RedisUtil.addHashString(redis, redisKey, "average", total.toString());
             RedisUtil.addHashString(redis, redisKey, "amount", "1");
         }
+    }
+
+    /**
+     * 大中小单 记录数据
+     * @param c2 交易币
+     * @param action big mid small
+     * @param type 入0 出1
+     * @param total 金额
+     */
+    private void common(String c2, String action, Integer type, BigDecimal total){
+        Map<Object, Object> map = new HashMap<>();
+        map.put("coin", c2);
+        map.put("exchangeId", EnumExchange.OKEX.getExchangId());
+        map.put("type", type);
+        map.put("param", action);
+        CapDistribution capDistribution;
+        List<CapDistribution> list = capDistributionService.selectAll(map);
+        if(list != null && list.size() != 0){
+            capDistribution = list.get(0);
+        }else {
+            capDistribution = new CapDistribution();
+        }
+        String big = RedisUtil.searchString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, action, type));
+        String num = RedisUtil.searchString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "num", type));
+        if(!StrUtils.isBlank(big) && !StrUtils.isBlank(num)) {
+            BigDecimal bigBig = new BigDecimal(big);
+            BigDecimal numBig = new BigDecimal(num);
+            RedisUtil.addString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, action, type), bigBig.add(total).toString());
+            RedisUtil.addString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "num", type), numBig.add(new BigDecimal(1)).toString());
+            capDistribution.setAmount(bigBig.add(total).toString());
+        }else{
+            RedisUtil.addString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, action, type), total.toString());
+            RedisUtil.addString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "num", type), "1");
+            capDistribution.setAmount(total.toString());
+        }
+        capDistributionService.saveOrUpdate(capDistribution);
     }
 
     /**
@@ -304,6 +322,7 @@ public class OKCoinServiceImpl implements WebSocketService {
      * @throws Exception
      */
     public void save24hState(String coin, BigDecimal total, JSONArray data, String price, String usdtAmountRedis) throws Exception {
+        DayState dayState = getDayState(coin);
         Map<Object, Object> map = new HashMap<>();
         map.put("exchangeid", EnumExchange.OKEX.getExchangId());
         map.put("coin", coin);
@@ -315,29 +334,34 @@ public class OKCoinServiceImpl implements WebSocketService {
             coinData = new CoinData();
         }
         String side = data.get(4).toString();
-        String inKey = String.format(RedisKey.DAY_IN_ORDER, coin);
+        /*String inKey = String.format(RedisKey.DAY_IN_ORDER, coin);
         //之前记录的今日交易买入总金额
         String oldIn = RedisUtil.searchString(redis, inKey);
         String outKey = String.format(RedisKey.DAY_OUT_ORDER, coin);
         //之前记录的今日交易卖出总金额
-        String oldOut = RedisUtil.searchString(redis, outKey);
+        String oldOut = RedisUtil.searchString(redis, outKey);*/
+        String oldIn = dayState.getIn();
+        String oldOut = dayState.getOut();
         if("bid".equals(side)){
             if(!"".equals(oldIn) && oldIn != null){
                 total = total.add(new BigDecimal(oldIn));
             }
-            RedisUtil.addString(redis, inKey, total.toString());
+            RedisUtil.addString(redis, String.format(RedisKey.DAY_IN_ORDER, coin), total.toString());
+            dayState.setIn(total.toString());
 
         }else if("ask".equals(side)) {
             if (!"".equals(oldOut) && oldOut != null) {
                 total = total.add(new BigDecimal(oldOut));
             }
-            RedisUtil.addString(redis, outKey, total.toString());
+            RedisUtil.addString(redis, String.format(RedisKey.DAY_OUT_ORDER, coin), total.toString());
+            dayState.setOut(total.toString());
         }else{
             throw new Exception("获取最新订单信息有误");
         }
         BigDecimal actual = new BigDecimal(oldIn).subtract(new BigDecimal(oldOut));
         String actualKey = String.format(RedisKey.DAY_ACTUAL_ORDER, coin);
         RedisUtil.addString(redis, actualKey, actual.toString());
+        dayState.setActual(actual.toString());
         //市值
         String marketCap = RedisUtil.searchHashString(redis, String.format(RedisKey.COIN_DETAILS, 0, coin), "marketCap");
         //24小时净流入百分比
@@ -346,15 +370,17 @@ public class OKCoinServiceImpl implements WebSocketService {
             actual = BigDecimalUtils.plusMinus(actual);
             BigDecimal parent = actual.divide(new BigDecimal(marketCap), BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100));
             RedisUtil.addString(redis, actualParentKey, "-" + BigDecimalUtils.roundDown(parent, 2) + "%");
+            dayState.setRatio("-" + BigDecimalUtils.roundDown(parent, 2) + "%");
         }else{
             BigDecimal parent = actual.divide(new BigDecimal(marketCap), BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100));
             RedisUtil.addString(redis, actualParentKey, "+" + BigDecimalUtils.roundDown(parent, 2) + "%");
+            dayState.setRatio("+" + BigDecimalUtils.roundDown(parent, 2) + "%");
         }
         String priceChangeRedisKey = String.format(RedisKey.COIN_DETAILS, EnumExchange.OKEX.getExchangId(), coin);
         //详情页title 价格
         RedisUtil.addHashString(redis, priceChangeRedisKey, "price", price);
         //详情页title 价格变化
-        String oldPrice = RedisUtil.searchString(redis, String.format(RedisKey.COIN_PRICE, EnumExchange.OKEX.getExchangId(), CoinType.getCode(coin), 1));
+        String oldPrice = coinPriceService.getPrice(1, CoinType.getCode(coin), EnumExchange.OKEX.getExchangId());
         RedisUtil.addHashString(redis, priceChangeRedisKey, "24hchange_price", new BigDecimal(price).subtract(new BigDecimal(oldPrice)).toString());
         BigDecimal priceChange = new BigDecimal(price).subtract(new BigDecimal(oldPrice));
         //详情页title 价格变化百分比
@@ -399,6 +425,12 @@ public class OKCoinServiceImpl implements WebSocketService {
         coinDataService.saveOrUpdate(coinData);
     }
 
+    /**
+     * 插入最新成交记录
+     * @param data
+     * @param coin
+     * @param price
+     */
     public void insert(JSONArray data, String coin, String price){
         Integer coinId = CoinType.getCode(coin.toUpperCase());
         String volume = data.get(2).toString();
@@ -411,5 +443,36 @@ public class OKCoinServiceImpl implements WebSocketService {
         okexDealRecord.setVolume(volume);
         okexDealRecord.setCoinid(coinId);
         okexDealRecordService.insertSelective(okexDealRecord);
+    }
+
+    /**
+     * 获取24小时资金变化
+     * @param coin
+     * @return
+     */
+    public DayState getDayState(String coin){
+        String inKey = String.format(RedisKey.DAY_IN_ORDER, coin);
+        String oldIn = RedisUtil.searchString(redis, inKey);
+        String outKey = String.format(RedisKey.DAY_OUT_ORDER, coin);
+        String oldOut = RedisUtil.searchString(redis, outKey);
+        String actual = RedisUtil.searchString(redis, String.format(RedisKey.DAY_ACTUAL_ORDER, coin));
+        String ratio = RedisUtil.searchString(redis, String.format(RedisKey.DAY_ACTUALPARENT_ORDER, coin));
+        if(StrUtils.isNotEmptyBatch(oldIn, oldOut, actual, ratio)){
+            Map<Object, Object> map = new HashMap<>();
+            map.put("coin", coin);
+            List<DayState> list = dayStateService.selectAll(map);
+            if(list != null && list.size() !=0){
+                return list.get(0);
+            }
+            return null;
+        }else{
+            DayState dayState = new DayState();
+            dayState.setActual(actual);
+            dayState.setCoin(coin);
+            dayState.setIn(oldIn);
+            dayState.setOut(oldOut);
+            dayState.setRatio(ratio);
+            return dayState;
+        }
     }
 }
