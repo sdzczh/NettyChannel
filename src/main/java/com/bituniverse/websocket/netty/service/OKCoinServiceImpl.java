@@ -330,6 +330,9 @@ public class OKCoinServiceImpl implements WebSocketService {
      */
     public void save24hState(String coin, BigDecimal total, JSONArray data, String price, String usdtAmountRedis) throws Exception {
         DayState dayState = getDayState(coin);
+        if(dayState == null){
+            dayState = new DayState();
+        }
         Map<Object, Object> map = new HashMap<>();
         map.put("exchangeid", EnumExchange.OKEX.getExchangId());
         map.put("coin", coin);
@@ -365,7 +368,12 @@ public class OKCoinServiceImpl implements WebSocketService {
         }else{
             throw new Exception("获取最新订单信息有误");
         }
-        BigDecimal actual = new BigDecimal(oldIn).subtract(new BigDecimal(oldOut));
+        BigDecimal actual;
+        if(oldIn == null && oldOut==null ){
+             actual = new BigDecimal(0);
+        }else {
+             actual = new BigDecimal(oldIn).subtract(new BigDecimal(oldOut));
+        }
         String actualKey = String.format(RedisKey.DAY_ACTUAL_ORDER, EnumExchange.OKEX.getExchangId(), coin);
         RedisUtil.addString(redis, actualKey, actual.toString());
         dayState.setActual(actual.toString());
