@@ -296,19 +296,21 @@ public class OKCoinServiceImpl implements WebSocketService {
             return;
         }else{
             //插入数据库
+            String side = data.get(4).toString();
+            Integer action = "ask".equals(side) ? 1 : 0;
             SuperOrder superOrder = new SuperOrder();
             BigDecimal price = new BigDecimal(data.get(1).toString()).multiply(new BigDecimal(usdtPrice));
             superOrder.setCoin(coin);
             superOrder.setExchangeid(EnumExchange.OKEX.getExchangId());
             superOrder.setPrice(price.toString());
-            superOrder.setSide(data.get(4).toString());
+            superOrder.setSide(action.toString());
             superOrder.setTotal(total.toString());
             superOrder.setSize(data.get(2).toString());
             superOrder.setTime(DateUtils.getCurrentDateStr() + " " + data.get(3).toString());
             superOrderService.insertSelective(superOrder);
             //写入缓存
             resultMap.put("time", DateUtils.getCurrentDateStr() + " " + data.get(3));
-            resultMap.put("side", data.get(4));
+            resultMap.put("side", action.toString());
             resultMap.put("price",price.toString());
             resultMap.put("total", total);
             resultMap.put("size", data.get(2));
