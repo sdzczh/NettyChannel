@@ -347,21 +347,21 @@ public class OKCoinServiceImpl implements WebSocketService {
         String outKey = String.format(RedisKey.DAY_OUT_ORDER, coin);
         //之前记录的今日交易卖出总金额
         String oldOut = RedisUtil.searchString(redis, outKey);*/
-        String oldIn = dayState.getIn();
-        String oldOut = dayState.getOut();
+        String oldIn = dayState.getDayIn();
+        String oldOut = dayState.getDayOut();
         if("bid".equals(side)){
             if(!"".equals(oldIn) && oldIn != null){
                 total = total.add(new BigDecimal(oldIn));
             }
             RedisUtil.addString(redis, String.format(RedisKey.DAY_IN_ORDER, EnumExchange.OKEX.getExchangId(), coin), total.toString());
-            dayState.setIn(total.toString());
+            dayState.setDayIn(total.toString());
 
         }else if("ask".equals(side)) {
             if (!"".equals(oldOut) && oldOut != null) {
                 total = total.add(new BigDecimal(oldOut));
             }
             RedisUtil.addString(redis, String.format(RedisKey.DAY_OUT_ORDER, EnumExchange.OKEX.getExchangId(), coin), total.toString());
-            dayState.setOut(total.toString());
+            dayState.setDayOut(total.toString());
         }else{
             throw new Exception("获取最新订单信息有误");
         }
@@ -477,9 +477,9 @@ public class OKCoinServiceImpl implements WebSocketService {
             DayState dayState = new DayState();
             dayState.setActual(actual);
             dayState.setCoin(coin);
-            dayState.setIn(oldIn);
+            dayState.setDayIn(oldIn);
             dayState.setExchangeid(EnumExchange.OKEX.getExchangId());
-            dayState.setOut(oldOut);
+            dayState.setDayOut(oldOut);
             dayState.setRatio(ratio);
             return dayState;
         }

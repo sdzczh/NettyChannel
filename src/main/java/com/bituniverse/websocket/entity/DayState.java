@@ -3,7 +3,7 @@ package com.bituniverse.websocket.entity;
 import java.io.Serializable;
 
 public class DayState implements Serializable {
-    private static final long serialVersionUID = 2086919274491199523L;
+    private static final long serialVersionUID = -5787178249178753686L;
 
     private Integer id;
 
@@ -11,9 +11,9 @@ public class DayState implements Serializable {
 
     private String coin;
 
-    private String in;
+    private String dayIn;
 
-    private String out;
+    private String dayOut;
 
     private String actual;
 
@@ -43,20 +43,20 @@ public class DayState implements Serializable {
         this.coin = coin == null ? null : coin.trim();
     }
 
-    public String getIn() {
-        return in;
+    public String getDayIn() {
+        return dayIn;
     }
 
-    public void setIn(String in) {
-        this.in = in == null ? null : in.trim();
+    public void setDayIn(String dayIn) {
+        this.dayIn = dayIn == null ? null : dayIn.trim();
     }
 
-    public String getOut() {
-        return out;
+    public String getDayOut() {
+        return dayOut;
     }
 
-    public void setOut(String out) {
-        this.out = out == null ? null : out.trim();
+    public void setDayOut(String dayOut) {
+        this.dayOut = dayOut == null ? null : dayOut.trim();
     }
 
     public String getActual() {
@@ -85,8 +85,8 @@ public class DayState implements Serializable {
         sb.append(", id=").append(id);
         sb.append(", exchangeid=").append(exchangeid);
         sb.append(", coin=").append(coin);
-        sb.append(", in=").append(in);
-        sb.append(", out=").append(out);
+        sb.append(", dayIn=").append(dayIn);
+        sb.append(", dayOut=").append(dayOut);
         sb.append(", actual=").append(actual);
         sb.append(", ratio=").append(ratio);
         sb.append("]");
