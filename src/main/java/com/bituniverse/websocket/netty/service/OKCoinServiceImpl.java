@@ -304,10 +304,10 @@ public class OKCoinServiceImpl implements WebSocketService {
             superOrder.setSide(data.get(4).toString());
             superOrder.setTotal(total.toString());
             superOrder.setSize(data.get(2).toString());
-            superOrder.setTime(data.get(3).toString());
+            superOrder.setTime(DateUtils.getCurrentDateStr() + " " + data.get(3).toString());
             superOrderService.insertSelective(superOrder);
             //写入缓存
-            resultMap.put("time", data.get(3));
+            resultMap.put("time", DateUtils.getCurrentDateStr() + " " + data.get(3));
             resultMap.put("side", data.get(4));
             resultMap.put("price",price.toString());
             resultMap.put("total", total);
