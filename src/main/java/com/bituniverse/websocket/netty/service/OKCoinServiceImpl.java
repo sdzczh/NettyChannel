@@ -275,6 +275,10 @@ public class OKCoinServiceImpl implements WebSocketService {
             RedisUtil.addString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "num", type), "1");
             capDistribution.setAmount(total.toString());
         }
+        capDistribution.setCoin(c2);
+        capDistribution.setExchangeid(EnumExchange.OKEX.getExchangId());
+        capDistribution.setType(type);
+        capDistribution.setParam(action);
         capDistributionService.saveOrUpdate(capDistribution);
     }
 
