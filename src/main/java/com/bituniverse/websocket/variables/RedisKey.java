@@ -26,14 +26,14 @@ public class RedisKey {
 
 	//超级大单 交易所：交易币 (c2)
 	public static final String SUPER_ORDER = "bituniverse:superOrder:%s:%s";
-	//24小时流入
-	public static final String DAY_IN_ORDER = "bituniverse:dayState:in:%s";
-	//24小时流出
-	public static final String DAY_OUT_ORDER = "bituniverse:dayState:out:%s";
-	//24小时净流入
-	public static final String DAY_ACTUAL_ORDER = "bituniverse:dayState:actual:%s";
-	//24小时净流入百分比
-	public static final String DAY_ACTUALPARENT_ORDER = "bituniverse:dayState:parent:%s";
+	//24小时流入 交易所：交易币 (c2)
+	public static final String DAY_IN_ORDER = "bituniverse:dayState:in:%s:%s";
+	//24小时流出 交易所：交易币 (c2)
+	public static final String DAY_OUT_ORDER = "bituniverse:dayState:out:%s:%s";
+	//24小时净流入 交易所：交易币 (c2)
+	public static final String DAY_ACTUAL_ORDER = "bituniverse:dayState:actual:%s:%s";
+	//24小时净流入百分比 交易所：交易币 (c2)
+	public static final String DAY_ACTUALPARENT_ORDER = "bituniverse:dayState:parent:%s:%s";
 	//币种详情 交易所：交易币 (c2)
 	public static final String COIN_DETAILS = "bituniverse:details:%s:%s";
 	//资金分布饼图 交易所：交易币 (c2)

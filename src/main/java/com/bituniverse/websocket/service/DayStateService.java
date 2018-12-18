@@ -7,14 +7,14 @@ import java.util.Map;
 /**
  * 
  * @author: autogeneration
- * @date: 2018-12-17 16:44:03
+ * @date: 2018-12-18 15:41:32
  **/ 
 public interface DayStateService {
     /**
      * 添加
      * 
      * @author: autogeneration
-     * @date: 2018-12-17 16:44:03
+     * @date: 2018-12-18 15:41:32
      **/ 
     int insert(DayState record);
 
@@ -22,7 +22,7 @@ public interface DayStateService {
      * 添加
      * 
      * @author: autogeneration
-     * @date: 2018-12-17 16:44:03
+     * @date: 2018-12-18 15:41:32
      **/ 
     int insertSelective(DayState record);
 
@@ -30,7 +30,7 @@ public interface DayStateService {
      * 更新
      * 
      * @author: autogeneration
-     * @date: 2018-12-17 16:44:03
+     * @date: 2018-12-18 15:41:32
      **/ 
     int updateByPrimaryKey(DayState record);
 
@@ -38,7 +38,7 @@ public interface DayStateService {
      * 更新
      * 
      * @author: autogeneration
-     * @date: 2018-12-17 16:44:03
+     * @date: 2018-12-18 15:41:32
      **/ 
     int updateByPrimaryKeySelective(DayState record);
 
@@ -46,7 +46,7 @@ public interface DayStateService {
      * 删除
      * 
      * @author: autogeneration
-     * @date: 2018-12-17 16:44:03
+     * @date: 2018-12-18 15:41:32
      **/ 
     int deleteByPrimaryKey(Integer id);
 
@@ -54,7 +54,7 @@ public interface DayStateService {
      * 按主键查询
      * 
      * @author: autogeneration
-     * @date: 2018-12-17 16:44:03
+     * @date: 2018-12-18 15:41:32
      **/ 
     DayState selectByPrimaryKey(Integer id);
 
@@ -62,7 +62,7 @@ public interface DayStateService {
      * 条件查询
      * 
      * @author: autogeneration
-     * @date: 2018-12-17 16:44:03
+     * @date: 2018-12-18 15:41:32
      **/ 
     List<DayState> selectAll(Map<Object, Object> param);
 
@@ -70,7 +70,7 @@ public interface DayStateService {
      * 分页查询
      * 
      * @author: autogeneration
-     * @date: 2018-12-17 16:44:03
+     * @date: 2018-12-18 15:41:32
      **/ 
     List<DayState> selectPaging(Map<Object, Object> param);
 
@@ -78,7 +78,7 @@ public interface DayStateService {
      * 统计查询
      * 
      * @author: autogeneration
-     * @date: 2018-12-17 16:44:03
+     * @date: 2018-12-18 15:41:32
      **/ 
     int selectCount(Map<Object, Object> param);
 }

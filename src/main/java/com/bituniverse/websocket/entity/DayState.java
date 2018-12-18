@@ -3,9 +3,11 @@ package com.bituniverse.websocket.entity;
 import java.io.Serializable;
 
 public class DayState implements Serializable {
-    private static final long serialVersionUID = -7797887851126835407L;
+    private static final long serialVersionUID = 2086919274491199523L;
 
     private Integer id;
+
+    private Integer exchangeid;
 
     private String coin;
 
@@ -23,6 +25,14 @@ public class DayState implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getExchangeid() {
+        return exchangeid;
+    }
+
+    public void setExchangeid(Integer exchangeid) {
+        this.exchangeid = exchangeid;
     }
 
     public String getCoin() {
@@ -73,6 +83,7 @@ public class DayState implements Serializable {
         sb.append("Hash = ").append(hashCode());
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append(", id=").append(id);
+        sb.append(", exchangeid=").append(exchangeid);
         sb.append(", coin=").append(coin);
         sb.append(", in=").append(in);
         sb.append(", out=").append(out);

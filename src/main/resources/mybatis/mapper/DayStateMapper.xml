@@ -3,6 +3,7 @@
 <mapper namespace="com.bituniverse.websocket.dao.DayStateMapper">
   <resultMap id="BaseResultMap" type="com.bituniverse.websocket.entity.DayState">
     <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="exchangeId" jdbcType="INTEGER" property="exchangeid" />
     <result column="coin" jdbcType="VARCHAR" property="coin" />
     <result column="in" jdbcType="VARCHAR" property="in" />
     <result column="out" jdbcType="VARCHAR" property="out" />
@@ -10,16 +11,16 @@
     <result column="ratio" jdbcType="VARCHAR" property="ratio" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, coin, in, out, actual, ratio
+    id, exchangeId, coin, in, out, actual, ratio
   </sql>
   <insert id="insert" parameterType="com.bituniverse.websocket.entity.DayState">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into day_state (coin, in, out, 
-      actual, ratio)
-    values (#{coin,jdbcType=VARCHAR}, #{in,jdbcType=VARCHAR}, #{out,jdbcType=VARCHAR}, 
-      #{actual,jdbcType=VARCHAR}, #{ratio,jdbcType=VARCHAR})
+    insert into day_state (exchangeId, coin, in, 
+      out, actual, ratio)
+    values (#{exchangeid,jdbcType=INTEGER}, #{coin,jdbcType=VARCHAR}, #{in,jdbcType=VARCHAR}, 
+      #{out,jdbcType=VARCHAR}, #{actual,jdbcType=VARCHAR}, #{ratio,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.bituniverse.websocket.entity.DayState">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
@@ -27,6 +28,9 @@
     </selectKey>
     insert into day_state
     <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="exchangeid != null">
+        exchangeId,
+      </if>
       <if test="coin != null">
         coin,
       </if>
@@ -44,6 +48,9 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="exchangeid != null">
+        #{exchangeid,jdbcType=INTEGER},
+      </if>
       <if test="coin != null">
         #{coin,jdbcType=VARCHAR},
       </if>
@@ -63,7 +70,8 @@
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.bituniverse.websocket.entity.DayState">
     update day_state
-    set coin = #{coin,jdbcType=VARCHAR},
+    set exchangeId = #{exchangeid,jdbcType=INTEGER},
+      coin = #{coin,jdbcType=VARCHAR},
       in = #{in,jdbcType=VARCHAR},
       out = #{out,jdbcType=VARCHAR},
       actual = #{actual,jdbcType=VARCHAR},
@@ -73,6 +81,9 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.bituniverse.websocket.entity.DayState">
     update day_state
     <set>
+      <if test="exchangeid != null">
+        exchangeId = #{exchangeid,jdbcType=INTEGER},
+      </if>
       <if test="coin != null">
         coin = #{coin,jdbcType=VARCHAR},
       </if>
@@ -106,6 +117,9 @@
     <include refid="Base_Column_List" />
     from day_state
     where 1=1 
+    <if test="exchangeid != null">
+       and  exchangeId = #{exchangeid,jdbcType=INTEGER}
+    </if>
     <if test="coin != null">
        and  coin = #{coin,jdbcType=VARCHAR}
     </if>
@@ -128,6 +142,9 @@
     <include refid="Base_Column_List" />
     from day_state
     where 1=1 
+    <if test="exchangeid != null">
+       and  exchangeId = #{exchangeid,jdbcType=INTEGER}
+    </if>
     <if test="coin != null">
        and  coin = #{coin,jdbcType=VARCHAR}
     </if>
@@ -149,6 +166,9 @@
     select count(*) 
     from day_state 
     where 1=1 
+    <if test="exchangeid != null">
+       and  exchangeId = #{exchangeid,jdbcType=INTEGER}
+    </if>
     <if test="coin != null">
        and  coin = #{coin,jdbcType=VARCHAR}
     </if>

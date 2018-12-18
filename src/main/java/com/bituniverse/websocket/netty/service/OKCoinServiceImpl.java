@@ -353,26 +353,26 @@ public class OKCoinServiceImpl implements WebSocketService {
             if(!"".equals(oldIn) && oldIn != null){
                 total = total.add(new BigDecimal(oldIn));
             }
-            RedisUtil.addString(redis, String.format(RedisKey.DAY_IN_ORDER, coin), total.toString());
+            RedisUtil.addString(redis, String.format(RedisKey.DAY_IN_ORDER, EnumExchange.OKEX.getExchangId(), coin), total.toString());
             dayState.setIn(total.toString());
 
         }else if("ask".equals(side)) {
             if (!"".equals(oldOut) && oldOut != null) {
                 total = total.add(new BigDecimal(oldOut));
             }
-            RedisUtil.addString(redis, String.format(RedisKey.DAY_OUT_ORDER, coin), total.toString());
+            RedisUtil.addString(redis, String.format(RedisKey.DAY_OUT_ORDER, EnumExchange.OKEX.getExchangId(), coin), total.toString());
             dayState.setOut(total.toString());
         }else{
             throw new Exception("获取最新订单信息有误");
         }
         BigDecimal actual = new BigDecimal(oldIn).subtract(new BigDecimal(oldOut));
-        String actualKey = String.format(RedisKey.DAY_ACTUAL_ORDER, coin);
+        String actualKey = String.format(RedisKey.DAY_ACTUAL_ORDER, EnumExchange.OKEX.getExchangId(), coin);
         RedisUtil.addString(redis, actualKey, actual.toString());
         dayState.setActual(actual.toString());
         //市值
         String marketCap = RedisUtil.searchHashString(redis, String.format(RedisKey.COIN_DETAILS, 0, coin), "marketCap");
         //24小时净流入百分比
-        String actualParentKey = String.format(RedisKey.DAY_ACTUALPARENT_ORDER, coin);
+        String actualParentKey = String.format(RedisKey.DAY_ACTUALPARENT_ORDER, EnumExchange.OKEX.getExchangId(), coin);
         if(actual.compareTo(BigDecimal.ZERO) == -1){
             actual = BigDecimalUtils.plusMinus(actual);
             BigDecimal parent = actual.divide(new BigDecimal(marketCap), BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100));
@@ -458,15 +458,16 @@ public class OKCoinServiceImpl implements WebSocketService {
      * @return
      */
     public DayState getDayState(String coin){
-        String inKey = String.format(RedisKey.DAY_IN_ORDER, coin);
+        String inKey = String.format(RedisKey.DAY_IN_ORDER, EnumExchange.OKEX.getExchangId(), coin);
         String oldIn = RedisUtil.searchString(redis, inKey);
-        String outKey = String.format(RedisKey.DAY_OUT_ORDER, coin);
+        String outKey = String.format(RedisKey.DAY_OUT_ORDER, EnumExchange.OKEX.getExchangId(), coin);
         String oldOut = RedisUtil.searchString(redis, outKey);
-        String actual = RedisUtil.searchString(redis, String.format(RedisKey.DAY_ACTUAL_ORDER, coin));
-        String ratio = RedisUtil.searchString(redis, String.format(RedisKey.DAY_ACTUALPARENT_ORDER, coin));
+        String actual = RedisUtil.searchString(redis, String.format(RedisKey.DAY_ACTUAL_ORDER, EnumExchange.OKEX.getExchangId(), coin));
+        String ratio = RedisUtil.searchString(redis, String.format(RedisKey.DAY_ACTUALPARENT_ORDER, EnumExchange.OKEX.getExchangId(), coin));
         if(StrUtils.isNotEmptyBatch(oldIn, oldOut, actual, ratio)){
             Map<Object, Object> map = new HashMap<>();
             map.put("coin", coin);
+            map.put("exchangeid", EnumExchange.OKEX.getExchangId());
             List<DayState> list = dayStateService.selectAll(map);
             if(list != null && list.size() !=0){
                 return list.get(0);
@@ -477,6 +478,7 @@ public class OKCoinServiceImpl implements WebSocketService {
             dayState.setActual(actual);
             dayState.setCoin(coin);
             dayState.setIn(oldIn);
+            dayState.setExchangeid(EnumExchange.OKEX.getExchangId());
             dayState.setOut(oldOut);
             dayState.setRatio(ratio);
             return dayState;
