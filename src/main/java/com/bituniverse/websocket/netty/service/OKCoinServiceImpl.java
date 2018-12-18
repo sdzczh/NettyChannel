@@ -347,8 +347,8 @@ public class OKCoinServiceImpl implements WebSocketService {
         String outKey = String.format(RedisKey.DAY_OUT_ORDER, coin);
         //之前记录的今日交易卖出总金额
         String oldOut = RedisUtil.searchString(redis, outKey);*/
-        String oldIn = dayState.getDayIn();
-        String oldOut = dayState.getDayOut();
+        String oldIn = dayState == null ? null : dayState.getDayIn();
+        String oldOut = dayState == null ? null : dayState.getDayOut();
         if("bid".equals(side)){
             if(!"".equals(oldIn) && oldIn != null){
                 total = total.add(new BigDecimal(oldIn));
