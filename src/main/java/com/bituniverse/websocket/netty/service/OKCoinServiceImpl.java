@@ -123,6 +123,7 @@ public class OKCoinServiceImpl implements WebSocketService {
                             getSuperOrder(c2, total, data, usdtPrice);
                             //记录24小时状态
                             save24hState(c2, total, data, price, usdtAmountRedis);
+                            //饼图数据
                             getFundDistribution(c2, total, data);
                         }
                         JSONObject broadcast = new JSONObject();
@@ -151,7 +152,7 @@ public class OKCoinServiceImpl implements WebSocketService {
                     BigDecimal price = array.getBigDecimal(4);
                     BigDecimal amount = array.getBigDecimal(5);
                     if (price == null) price = new BigDecimal(0);
-                    Map<String, Object> params = new HashMap<String, Object>();
+                    Map<String, Object> params = new HashMap<>();
                     params.put("amount", amount);
                     params.put("close", price);
                     params.put("time", DateUtils.stampToDate(String.valueOf(timestamp)));
