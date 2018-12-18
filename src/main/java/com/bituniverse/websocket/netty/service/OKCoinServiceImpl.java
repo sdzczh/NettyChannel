@@ -485,6 +485,11 @@ public class OKCoinServiceImpl implements WebSocketService {
             return null;
         }else{
             DayState dayState = new DayState();
+            if("BTC".equals(coin)){
+                dayState.setId(1);
+            }else{
+                dayState.setId(2);
+            }
             dayState.setActual(actual);
             dayState.setCoin(coin);
             dayState.setDayIn(oldIn);
