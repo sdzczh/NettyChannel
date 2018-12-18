@@ -66,4 +66,13 @@ public class DayStateServiceImpl implements DayStateService {
     public int selectCount(Map<Object, Object> param) {
         return this.dayStateMapper.selectCount(param);
     }
+
+    @Override
+    public void saveOrUpdate(DayState dayState) {
+        if(dayState.getId() == null){
+            dayStateMapper.insert(dayState);
+        }else{
+            dayStateMapper.updateByPrimaryKey(dayState);
+        }
+    }
 }

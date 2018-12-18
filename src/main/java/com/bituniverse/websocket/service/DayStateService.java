@@ -81,4 +81,6 @@ public interface DayStateService {
      * @date: 2018-12-18 15:57:50
      **/ 
     int selectCount(Map<Object, Object> param);
+
+    void saveOrUpdate(DayState dayState);
 }

@@ -391,6 +391,8 @@ public class OKCoinServiceImpl implements WebSocketService {
             RedisUtil.addString(redis, actualParentKey, "+" + BigDecimalUtils.roundDown(parent, 2) + "%");
             dayState.setRatio("+" + BigDecimalUtils.roundDown(parent, 2) + "%");
         }
+        dayState.setCoin(coin);
+        dayStateService.saveOrUpdate(dayState);
         String priceChangeRedisKey = String.format(RedisKey.COIN_DETAILS, EnumExchange.OKEX.getExchangId(), coin);
         //详情页title 价格
         RedisUtil.addHashString(redis, priceChangeRedisKey, "price", price);
