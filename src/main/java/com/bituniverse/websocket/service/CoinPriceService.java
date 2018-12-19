@@ -82,4 +82,6 @@ public interface CoinPriceService {
      **/ 
     int selectCount(Map<Object, Object> param);
     String getPrice(Integer c1, Integer c2, Integer exchangeId);
+
+    void saveOrUpdate(CoinPrice coinPrice);
 }

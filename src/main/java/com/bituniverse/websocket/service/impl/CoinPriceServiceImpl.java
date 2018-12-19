@@ -94,4 +94,13 @@ public class CoinPriceServiceImpl implements CoinPriceService {
             return price;
         }
     }
+
+    @Override
+    public void saveOrUpdate(CoinPrice coinPrice) {
+        if(coinPrice.getId() == null){
+            coinPriceMapper.insert(coinPrice);
+        }else{
+            coinPriceMapper.updateByPrimaryKey(coinPrice);
+        }
+    }
 }

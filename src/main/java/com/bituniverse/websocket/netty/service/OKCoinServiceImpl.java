@@ -203,7 +203,7 @@ public class OKCoinServiceImpl implements WebSocketService {
         if(list != null && list.size() != 0){
             CoinPrice coinPrice = list.get(0);
             coinPrice.setPrice(price);
-            coinPriceService.insertSelective(coinPrice);
+            coinPriceService.saveOrUpdate(coinPrice);
             RedisUtil.addString(redis, key, price);
         }else{
             RedisUtil.addString(redis, key, price);
