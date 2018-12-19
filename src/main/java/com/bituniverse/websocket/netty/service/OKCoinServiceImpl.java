@@ -103,6 +103,7 @@ public class OKCoinServiceImpl implements WebSocketService {
 
                     /*----------------------------------------发送最新价格广播-----------------------------------------------------------*/
                     List<String> list = new ArrayList<>();
+                    list.add("USDT");
                     list.add("CNY");
                     list.add("BTC");
                     list.add("ETH");
@@ -111,13 +112,15 @@ public class OKCoinServiceImpl implements WebSocketService {
                         String price = data.get(1).toString();
                         if(coin.equals(c2)){
                             price = "1";
-                        }else {
+                        }else if(coin.equals("USDT")){
+                            savePrice(CoinType.getCode(coin), CoinType.getCode(c2), EnumExchange.OKEX.getExchangId(), price);
+                        }else{
                             usdtPrice = RedisUtil.searchString(redis, String.format(RedisKey.USDT_PRICE, coin));
                             BigDecimal bPrice = new BigDecimal(usdtPrice).multiply(new BigDecimal(price));
                             price = BigDecimalUtils.round(bPrice, 8).toString();
+                            //保存最新价格
+                            savePrice(CoinType.getCode(coin), CoinType.getCode(c2), EnumExchange.OKEX.getExchangId(), price);
                         }
-                        //保存最新价格
-                        savePrice(CoinType.getCode(coin), CoinType.getCode(c2), EnumExchange.OKEX.getExchangId(), price);
                         if("CNY".equals(coin)){
                             //插入成交记录
                             insert(data, c2, price);
