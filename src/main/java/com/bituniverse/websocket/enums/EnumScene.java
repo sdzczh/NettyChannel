@@ -6,6 +6,8 @@ public class EnumScene {
 	public static final Integer SCENEN_INDEX_OKEX = 400;
 	//详情页 OKEX
 	public static final Integer SCENEN_DETAILS_OKEX = 401;
+	//详情页 OKEX 买卖盘
+	public static final Integer SCENEN_DETAILS_OKEX_ORDER = 4011;
 /*
 	//首页 OKEX 价格 BTC
 	public static final Integer SCENEN_INDEX_OKEX_PRICE_BTC = 400122;
