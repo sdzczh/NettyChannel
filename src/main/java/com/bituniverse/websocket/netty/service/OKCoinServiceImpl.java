@@ -116,7 +116,10 @@ public class OKCoinServiceImpl implements WebSocketService {
                             BigDecimal bPrice = new BigDecimal(usdtPrice).multiply(new BigDecimal(price));
                             price = BigDecimalUtils.round(bPrice, 8).toString();
                         }
+                        //保存最新价格
+                        savePrice(CoinType.getCode(coin), CoinType.getCode(c2), EnumExchange.OKEX.getExchangId(), price);
                         if("CNY".equals(coin)){
+                            //插入成交记录
                             insert(data, c2, price);
                             BigDecimal total = new BigDecimal(price).multiply(new BigDecimal(data.get(2).toString()));
                             //记录超级大单
@@ -126,7 +129,7 @@ public class OKCoinServiceImpl implements WebSocketService {
                             //饼图数据
                             getFundDistribution(c2, total, data);
                         }
-                        JSONObject broadcast = new JSONObject();
+                        /*JSONObject broadcast = new JSONObject();
                         broadcast.put("action", "broadcast");
                         JSONObject broadcastData = new JSONObject();
                         Integer c1 = CoinType.getCode(coin);
@@ -136,10 +139,10 @@ public class OKCoinServiceImpl implements WebSocketService {
                         broadcastData.put("c1", c1);
                         broadcastData.put("exchangeId", EnumExchange.OKEX.getExchangId());
                         broadcast.put("data", broadcastData);
-                        WebsocketClientUtils.sendTextMessage(broadcast.toJSONString());
+                        WebsocketClientUtils.sendTextMessage(broadcast.toJSONString());*/
                     }
                 }else if (channel.contains("kline")) {
-                    String[] strArr = channel.split("_");
+                    /*String[] strArr = channel.split("_");
                     String c2 = strArr[3].toUpperCase();
                     String c1 = strArr[4].toUpperCase();
                     log.info("收到okcoin服务器数据最新K-line变化【" + c2 + " - " + c1 +"】：" + resultObj.toJSONString());
@@ -159,20 +162,20 @@ public class OKCoinServiceImpl implements WebSocketService {
                     params.put("high", high);
                     params.put("low", low);
                     params.put("open", open);
-                    /*----------------------------------------发送线广播-----------------------------------------------------------*/
+                    *//*----------------------------------------发送线广播-----------------------------------------------------------*//*
                     JSONObject broadcast = new JSONObject();
                     broadcast.put("action", "broadcast");
                     JSONObject broadcastData = new JSONObject();
-                    /*switch (c1){
+                    *//*switch (c1){
                         case "BTC" : broadcastData.put("scene", EnumScene.SCENEN_DETAILS_OKEX_KLINE_BTC); break;
                         case "ETH" : broadcastData.put("scene", EnumScene.SCENEN_DETAILS_OKEX_KLINE_ETH); break;
                         default : broadcastData.put("scene", -1);
-                    }*/
+                    }*//*
                     broadcastData.put("scene", EnumScene.SCENEN_DETAILS_OKEX);
                     broadcastData.put("coin", c2);
                     broadcastData.put("info", params);
                     broadcast.put("data", broadcastData);
-                    WebsocketClientUtils.sendTextMessage(broadcast.toJSONString());
+                    WebsocketClientUtils.sendTextMessage(broadcast.toJSONString());*/
                 }
                 if (channel.equals("addChannel")) {
                     log.info("okcoin数据订阅成功:" + resultObj.toJSONString());
@@ -180,6 +183,36 @@ public class OKCoinServiceImpl implements WebSocketService {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * 保存价格
+     * @param c1
+     * @param c2
+     * @param exchangId
+     * @param price
+     */
+    private void savePrice(Integer c1, Integer c2, Integer exchangId, String price) {
+        String key = String.format(RedisKey.COIN_PRICE, exchangId, c2, c1);
+        Map<Object, Object> map = new HashMap<>();
+        map.put("c1", c1);
+        map.put("c2", c2);
+        map.put("exchangeid", exchangId);
+        List<CoinPrice> list = coinPriceService.selectAll(map);
+        if(list != null && list.size() != 0){
+            CoinPrice coinPrice = list.get(0);
+            coinPrice.setPrice(price);
+            coinPriceService.insertSelective(coinPrice);
+            RedisUtil.addString(redis, key, price);
+        }else{
+            RedisUtil.addString(redis, key, price);
+            CoinPrice coinPrice = new CoinPrice();
+            coinPrice.setPrice(price);
+            coinPrice.setExchangeid(exchangId);
+            coinPrice.setC2(c2);
+            coinPrice.setC1(c1);
+            coinPriceService.insertSelective(coinPrice);
         }
     }
 

@@ -83,7 +83,7 @@ public class CoinPriceServiceImpl implements CoinPriceService {
             Map<Object, Object> map = new HashMap<>();
             map.put("c1", c1);
             map.put("c2", c2);
-            map.put("exchangeId", exchangeId);
+            map.put("exchangeid", exchangeId);
             List<CoinPrice> list = coinPriceMapper.selectAll(map);
             if(list != null && list.size() != 0){
                 price = list.get(0).getPrice();
