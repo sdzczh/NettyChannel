@@ -226,7 +226,8 @@ public class OKCoinServiceImpl implements WebSocketService {
      * @param data
      */
     private void getFundDistribution(String c2, BigDecimal total, JSONArray data) {
-        String redisKey = String.format(RedisKey.COIN_FUND_DISTRIBUTION, EnumExchange.OKEX.getExchangId(), c2);
+        Integer coin = CoinType.getCode(c2);
+        String redisKey = String.format(RedisKey.COIN_FUND_DISTRIBUTION, EnumExchange.OKEX.getExchangId(), coin);
         //平均交易额
         String average = RedisUtil.searchHashString(redis, redisKey, "average");
         //交易笔数
