@@ -414,7 +414,7 @@ public class OKCoinServiceImpl implements WebSocketService {
         RedisUtil.addString(redis, actualKey, actual.toString());
         dayState.setActual(actual.toString());
         //市值
-        String marketCap = RedisUtil.searchHashString(redis, String.format(RedisKey.COIN_DETAILS, 0, coin), "marketCap");
+        String marketCap = RedisUtil.searchHashString(redis, String.format(RedisKey.COIN_DETAILS, 0, CoinType.getCode(coin)), "marketCap");
         //24小时净流入百分比
         String actualParentKey = String.format(RedisKey.DAY_ACTUALPARENT_ORDER, EnumExchange.OKEX.getExchangId(), coin);
         if(actual.compareTo(BigDecimal.ZERO) == -1){
