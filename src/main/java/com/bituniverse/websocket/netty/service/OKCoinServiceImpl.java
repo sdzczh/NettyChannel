@@ -93,12 +93,12 @@ public class OKCoinServiceImpl implements WebSocketService {
                     JSONArray data = resultObj.getJSONArray("data").getJSONArray(0);
                     //统计usdt日流通量
                     BigDecimal usdtAmount = new BigDecimal(data.get(1).toString());
-                    String usdtAmountRedis = RedisUtil.searchHashString(redis, String.format(RedisKey.COIN_DETAILS, EnumExchange.OKEX.getExchangId(), c2), "usdt_amount");
+                    String usdtAmountRedis = RedisUtil.searchHashString(redis, String.format(RedisKey.COIN_DETAILS, EnumExchange.OKEX.getExchangId(), CoinType.getCode(c2)), "usdt_amount");
                     if(!"".equals(usdtAmountRedis) && usdtAmountRedis != null){
                         usdtAmount = new BigDecimal(usdtAmountRedis).add(usdtAmount);
-                        RedisUtil.addHashString(redis, String.format(RedisKey.COIN_DETAILS, EnumExchange.OKEX.getExchangId(), c2), "usdt_amount", usdtAmount.toString());
+                        RedisUtil.addHashString(redis, String.format(RedisKey.COIN_DETAILS, EnumExchange.OKEX.getExchangId(), CoinType.getCode(c2)), "usdt_amount", usdtAmount.toString());
                     }else{
-                        RedisUtil.addHashString(redis, String.format(RedisKey.COIN_DETAILS, EnumExchange.OKEX.getExchangId(), c2), "usdt_amount", usdtAmount.toString());
+                        RedisUtil.addHashString(redis, String.format(RedisKey.COIN_DETAILS, EnumExchange.OKEX.getExchangId(), CoinType.getCode(c2)), "usdt_amount", usdtAmount.toString());
                     }
 
                     /*----------------------------------------发送最新价格广播-----------------------------------------------------------*/
@@ -429,7 +429,7 @@ public class OKCoinServiceImpl implements WebSocketService {
         }
         dayState.setCoin(coin);
         dayStateService.saveOrUpdate(dayState);
-        String priceChangeRedisKey = String.format(RedisKey.COIN_DETAILS, EnumExchange.OKEX.getExchangId(), coin);
+        String priceChangeRedisKey = String.format(RedisKey.COIN_DETAILS, EnumExchange.OKEX.getExchangId(), CoinType.getCode(coin));
         //详情页title 价格
         RedisUtil.addHashString(redis, priceChangeRedisKey, "price", price);
         //详情页title 价格变化
