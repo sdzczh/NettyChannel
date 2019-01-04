@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 /**
  * 
  * @author: autogeneration
- * @date: 2018-12-15 15:57:18
+ * @date: 2019-01-04 20:50:11
  **/ 
 @Service("superOrderService")
 public class SuperOrderServiceImpl implements SuperOrderService {
@@ -66,5 +66,4 @@ public class SuperOrderServiceImpl implements SuperOrderService {
     public int selectCount(Map<Object, Object> param) {
         return this.superOrderMapper.selectCount(param);
     }
-
 }

@@ -339,7 +339,7 @@ public class OKCoinServiceImpl implements WebSocketService {
             SuperOrder superOrder = new SuperOrder();
             BigDecimal price = new BigDecimal(data.get(1).toString()).multiply(new BigDecimal(usdtPrice));
             superOrder.setCoin(coin);
-            superOrder.setExchangeid(EnumExchange.OKEX.getExchangId());
+            superOrder.setExchangeId(EnumExchange.OKEX.getExchangId());
             superOrder.setPrice(price.toString());
             superOrder.setSide(action.toString());
             superOrder.setTotal(total.toString());
