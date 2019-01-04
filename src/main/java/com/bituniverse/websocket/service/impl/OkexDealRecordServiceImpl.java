@@ -1,9 +1,8 @@
 package com.bituniverse.websocket.service.impl;
 
 import com.bituniverse.websocket.dao.OkexDealRecordMapper;
-import com.bituniverse.websocket.service.OkexDealRecordService;
 import com.bituniverse.websocket.entity.OkexDealRecord;
-
+import com.bituniverse.websocket.service.OkexDealRecordService;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
@@ -14,7 +13,7 @@ import org.springframework.stereotype.Service;
 /**
  * 
  * @author: autogeneration
- * @date: 2018-12-12 16:58:41
+ * @date: 2019-01-04 20:38:46
  **/ 
 @Service("okexDealRecordService")
 public class OkexDealRecordServiceImpl implements OkexDealRecordService {

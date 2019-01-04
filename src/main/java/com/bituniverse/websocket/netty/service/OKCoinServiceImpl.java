@@ -495,7 +495,7 @@ public class OKCoinServiceImpl implements WebSocketService {
         okexDealRecord.setTime(DateUtils.getCurrentDateStr() + " " + time);
         okexDealRecord.setType(type);
         okexDealRecord.setVolume(volume);
-        okexDealRecord.setCoinid(coinId);
+        okexDealRecord.setCoinId(coinId);
         okexDealRecordService.insertSelective(okexDealRecord);
     }
 
