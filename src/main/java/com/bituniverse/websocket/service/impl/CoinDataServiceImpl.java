@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 /**
  * 
  * @author: autogeneration
- * @date: 2018-12-14 22:30:09
+ * @date: 2019-01-04 20:11:09
  **/ 
 @Service("coinDataService")
 public class CoinDataServiceImpl implements CoinDataService {
@@ -68,11 +68,11 @@ public class CoinDataServiceImpl implements CoinDataService {
     }
 
     @Override
-    public void saveOrUpdate(CoinData record) {
-        if(record.getId()==null){
-            coinDataMapper.insert(record);
+    public void saveOrUpdate(CoinData coinData) {
+        if(coinData.getId()==null){
+            coinDataMapper.insert(coinData);
         }else{
-            coinDataMapper.updateByPrimaryKey(record);
+            coinDataMapper.updateByPrimaryKey(coinData);
         }
     }
 }

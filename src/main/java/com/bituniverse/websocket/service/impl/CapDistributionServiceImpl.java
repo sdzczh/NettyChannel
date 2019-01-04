@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 /**
  * 
  * @author: autogeneration
- * @date: 2018-12-17 17:16:57
+ * @date: 2019-01-04 20:04:14
  **/ 
 @Service("capDistributionService")
 public class CapDistributionServiceImpl implements CapDistributionService {
@@ -70,9 +70,9 @@ public class CapDistributionServiceImpl implements CapDistributionService {
     @Override
     public void saveOrUpdate(CapDistribution capDistribution) {
         if(capDistribution.getId() == null){
-            this.insertSelective(capDistribution);
+            capDistributionMapper.insert(capDistribution);
         }else{
-            this.updateByPrimaryKeySelective(capDistribution);
+            capDistributionMapper.updateByPrimaryKey(capDistribution);
         }
     }
 }

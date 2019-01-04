@@ -3,7 +3,7 @@ package com.bituniverse.websocket.entity;
 import java.io.Serializable;
 
 public class CoinData implements Serializable {
-    private static final long serialVersionUID = -7445122717619759140L;
+    private static final long serialVersionUID = -1046169682420363053L;
 
     private Integer id;
 

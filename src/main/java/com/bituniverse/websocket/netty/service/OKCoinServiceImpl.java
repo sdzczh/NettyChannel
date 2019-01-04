@@ -314,7 +314,7 @@ public class OKCoinServiceImpl implements WebSocketService {
             capDistribution.setAmount(total.toString());
         }
         capDistribution.setCoin(c2);
-        capDistribution.setExchangeid(EnumExchange.OKEX.getExchangId());
+        capDistribution.setExchangeId(EnumExchange.OKEX.getExchangId());
         capDistribution.setType(type);
         capDistribution.setParam(action);
         capDistributionService.saveOrUpdate(capDistribution);
