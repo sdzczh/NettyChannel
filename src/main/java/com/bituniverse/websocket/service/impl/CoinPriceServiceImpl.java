@@ -20,16 +20,17 @@ import org.springframework.stereotype.Service;
 /**
  * 
  * @author: autogeneration
- * @date: 2018-12-17 13:41:23
+ * @date: 2019-01-04 20:25:47
  **/ 
 @Service("coinPriceService")
 public class CoinPriceServiceImpl implements CoinPriceService {
     @Resource
     private CoinPriceMapper coinPriceMapper;
-    @Resource
-    private RedisTemplate<String, String> redis;
 
     private static final Logger logger = LoggerFactory.getLogger(CoinPriceServiceImpl.class);
+
+    @Resource
+    private RedisTemplate<String, String> redis;
 
     @Override
     public int insert(CoinPrice record) {

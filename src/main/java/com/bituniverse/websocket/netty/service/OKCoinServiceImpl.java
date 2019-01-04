@@ -212,7 +212,7 @@ public class OKCoinServiceImpl implements WebSocketService {
             RedisUtil.addString(redis, key, price);
             CoinPrice coinPrice = new CoinPrice();
             coinPrice.setPrice(price);
-            coinPrice.setExchangeid(exchangId);
+            coinPrice.setExchangeId(exchangId);
             coinPrice.setC2(c2);
             coinPrice.setC1(c1);
             coinPriceService.insertSelective(coinPrice);
@@ -530,7 +530,7 @@ public class OKCoinServiceImpl implements WebSocketService {
             dayState.setActual(actual);
             dayState.setCoin(coin);
             dayState.setDayIn(oldIn);
-            dayState.setExchangeid(EnumExchange.OKEX.getExchangId());
+            dayState.setExchangeId(EnumExchange.OKEX.getExchangId());
             dayState.setDayOut(oldOut);
             dayState.setRatio(ratio);
             return dayState;
