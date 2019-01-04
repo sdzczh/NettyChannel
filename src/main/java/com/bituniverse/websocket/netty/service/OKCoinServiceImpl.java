@@ -468,7 +468,7 @@ public class OKCoinServiceImpl implements WebSocketService {
 
         //存入coinData对象到数据库
         coinData.setCoin(coin);
-        coinData.setExchangeid(EnumExchange.OKEX.getExchangId());
+        coinData.setExchangeId(EnumExchange.OKEX.getExchangId());
         coinData.setPrice(price);
         coinData.setPriceChange(priceChange.toString());
         coinData.setPriceUsdt(usdtPrice);

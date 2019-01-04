@@ -4,7 +4,7 @@
   <resultMap id="BaseResultMap" type="com.bituniverse.websocket.entity.CoinData">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="coin" jdbcType="VARCHAR" property="coin" />
-    <result column="exchangeId" jdbcType="INTEGER" property="exchangeid" />
+    <result column="exchange_id" jdbcType="INTEGER" property="exchangeId" />
     <result column="price" jdbcType="VARCHAR" property="price" />
     <result column="price_usdt" jdbcType="VARCHAR" property="priceUsdt" />
     <result column="price_change" jdbcType="VARCHAR" property="priceChange" />
@@ -17,19 +17,19 @@
     <result column="rank" jdbcType="VARCHAR" property="rank" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, coin, exchangeId, price, price_usdt, price_change, price_change_percent, day_high, 
+    id, coin, exchange_id, price, price_usdt, price_change, price_change_percent, day_high, 
     day_low, day_volume, market_cap, circulation, rank
   </sql>
   <insert id="insert" parameterType="com.bituniverse.websocket.entity.CoinData">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into coin_data (coin, exchangeId, price, 
+    insert into coin_data (coin, exchange_id, price, 
       price_usdt, price_change, price_change_percent, 
       day_high, day_low, day_volume, 
       market_cap, circulation, rank
       )
-    values (#{coin,jdbcType=VARCHAR}, #{exchangeid,jdbcType=INTEGER}, #{price,jdbcType=VARCHAR}, 
+    values (#{coin,jdbcType=VARCHAR}, #{exchangeId,jdbcType=INTEGER}, #{price,jdbcType=VARCHAR}, 
       #{priceUsdt,jdbcType=VARCHAR}, #{priceChange,jdbcType=VARCHAR}, #{priceChangePercent,jdbcType=VARCHAR}, 
       #{dayHigh,jdbcType=VARCHAR}, #{dayLow,jdbcType=VARCHAR}, #{dayVolume,jdbcType=VARCHAR}, 
       #{marketCap,jdbcType=VARCHAR}, #{circulation,jdbcType=VARCHAR}, #{rank,jdbcType=VARCHAR}
@@ -44,8 +44,8 @@
       <if test="coin != null">
         coin,
       </if>
-      <if test="exchangeid != null">
-        exchangeId,
+      <if test="exchangeId != null">
+        exchange_id,
       </if>
       <if test="price != null">
         price,
@@ -82,8 +82,8 @@
       <if test="coin != null">
         #{coin,jdbcType=VARCHAR},
       </if>
-      <if test="exchangeid != null">
-        #{exchangeid,jdbcType=INTEGER},
+      <if test="exchangeId != null">
+        #{exchangeId,jdbcType=INTEGER},
       </if>
       <if test="price != null">
         #{price,jdbcType=VARCHAR},
@@ -120,7 +120,7 @@
   <update id="updateByPrimaryKey" parameterType="com.bituniverse.websocket.entity.CoinData">
     update coin_data
     set coin = #{coin,jdbcType=VARCHAR},
-      exchangeId = #{exchangeid,jdbcType=INTEGER},
+      exchange_id = #{exchangeId,jdbcType=INTEGER},
       price = #{price,jdbcType=VARCHAR},
       price_usdt = #{priceUsdt,jdbcType=VARCHAR},
       price_change = #{priceChange,jdbcType=VARCHAR},
@@ -139,8 +139,8 @@
       <if test="coin != null">
         coin = #{coin,jdbcType=VARCHAR},
       </if>
-      <if test="exchangeid != null">
-        exchangeId = #{exchangeid,jdbcType=INTEGER},
+      <if test="exchangeId != null">
+        exchange_id = #{exchangeId,jdbcType=INTEGER},
       </if>
       <if test="price != null">
         price = #{price,jdbcType=VARCHAR},
@@ -193,8 +193,8 @@
     <if test="coin != null">
        and  coin = #{coin,jdbcType=VARCHAR}
     </if>
-    <if test="exchangeid != null">
-       and  exchangeId = #{exchangeid,jdbcType=INTEGER}
+    <if test="exchangeId != null">
+       and  exchange_id = #{exchangeId,jdbcType=INTEGER}
     </if>
     <if test="price != null">
        and  price = #{price,jdbcType=VARCHAR}
@@ -236,8 +236,8 @@
     <if test="coin != null">
        and  coin = #{coin,jdbcType=VARCHAR}
     </if>
-    <if test="exchangeid != null">
-       and  exchangeId = #{exchangeid,jdbcType=INTEGER}
+    <if test="exchangeId != null">
+       and  exchange_id = #{exchangeId,jdbcType=INTEGER}
     </if>
     <if test="price != null">
        and  price = #{price,jdbcType=VARCHAR}
@@ -278,8 +278,8 @@
     <if test="coin != null">
        and  coin = #{coin,jdbcType=VARCHAR}
     </if>
-    <if test="exchangeid != null">
-       and  exchangeId = #{exchangeid,jdbcType=INTEGER}
+    <if test="exchangeId != null">
+       and  exchange_id = #{exchangeId,jdbcType=INTEGER}
     </if>
     <if test="price != null">
        and  price = #{price,jdbcType=VARCHAR}

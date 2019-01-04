@@ -7,14 +7,14 @@ import java.util.Map;
 /**
  * 
  * @author: autogeneration
- * @date: 2019-01-04 20:11:09
+ * @date: 2019-01-04 20:12:38
  **/ 
 public interface CoinDataService {
     /**
      * 添加
      * 
      * @author: autogeneration
-     * @date: 2019-01-04 20:11:09
+     * @date: 2019-01-04 20:12:38
      **/ 
     int insert(CoinData record);
 
@@ -22,7 +22,7 @@ public interface CoinDataService {
      * 添加
      * 
      * @author: autogeneration
-     * @date: 2019-01-04 20:11:09
+     * @date: 2019-01-04 20:12:38
      **/ 
     int insertSelective(CoinData record);
 
@@ -30,7 +30,7 @@ public interface CoinDataService {
      * 更新
      * 
      * @author: autogeneration
-     * @date: 2019-01-04 20:11:09
+     * @date: 2019-01-04 20:12:38
      **/ 
     int updateByPrimaryKey(CoinData record);
 
@@ -38,7 +38,7 @@ public interface CoinDataService {
      * 更新
      * 
      * @author: autogeneration
-     * @date: 2019-01-04 20:11:09
+     * @date: 2019-01-04 20:12:38
      **/ 
     int updateByPrimaryKeySelective(CoinData record);
 
@@ -46,7 +46,7 @@ public interface CoinDataService {
      * 删除
      * 
      * @author: autogeneration
-     * @date: 2019-01-04 20:11:09
+     * @date: 2019-01-04 20:12:38
      **/ 
     int deleteByPrimaryKey(Integer id);
 
@@ -54,7 +54,7 @@ public interface CoinDataService {
      * 按主键查询
      * 
      * @author: autogeneration
-     * @date: 2019-01-04 20:11:09
+     * @date: 2019-01-04 20:12:38
      **/ 
     CoinData selectByPrimaryKey(Integer id);
 
@@ -62,7 +62,7 @@ public interface CoinDataService {
      * 条件查询
      * 
      * @author: autogeneration
-     * @date: 2019-01-04 20:11:09
+     * @date: 2019-01-04 20:12:38
      **/ 
     List<CoinData> selectAll(Map<Object, Object> param);
 
@@ -70,7 +70,7 @@ public interface CoinDataService {
      * 分页查询
      * 
      * @author: autogeneration
-     * @date: 2019-01-04 20:11:09
+     * @date: 2019-01-04 20:12:38
      **/ 
     List<CoinData> selectPaging(Map<Object, Object> param);
 
@@ -78,7 +78,7 @@ public interface CoinDataService {
      * 统计查询
      * 
      * @author: autogeneration
-     * @date: 2019-01-04 20:11:09
+     * @date: 2019-01-04 20:12:38
      **/ 
     int selectCount(Map<Object, Object> param);
 
