@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 /**
  * 
  * @author: autogeneration
- * @date: 2019-01-04 20:38:46
+ * @date: 2019-01-17 11:25:59
  **/ 
 @Service("okexDealRecordService")
 public class OkexDealRecordServiceImpl implements OkexDealRecordService {

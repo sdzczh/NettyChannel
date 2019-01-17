@@ -3,6 +3,7 @@
 <mapper namespace="com.bituniverse.websocket.dao.OkexDealRecordMapper">
   <resultMap id="BaseResultMap" type="com.bituniverse.websocket.entity.OkexDealRecord">
     <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="exchange_id" jdbcType="INTEGER" property="exchangeId" />
     <result column="coin_id" jdbcType="INTEGER" property="coinId" />
     <result column="price" jdbcType="VARCHAR" property="price" />
     <result column="volume" jdbcType="VARCHAR" property="volume" />
@@ -10,16 +11,16 @@
     <result column="time" jdbcType="VARCHAR" property="time" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, coin_id, price, volume, type, time
+    id, exchange_id, coin_id, price, volume, type, time
   </sql>
   <insert id="insert" parameterType="com.bituniverse.websocket.entity.OkexDealRecord">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into okex_deal_record (coin_id, price, volume, 
-      type, time)
-    values (#{coinId,jdbcType=INTEGER}, #{price,jdbcType=VARCHAR}, #{volume,jdbcType=VARCHAR}, 
-      #{type,jdbcType=INTEGER}, #{time,jdbcType=VARCHAR})
+    insert into okex_deal_record (exchange_id, coin_id, price, 
+      volume, type, time)
+    values (#{exchangeId,jdbcType=INTEGER}, #{coinId,jdbcType=INTEGER}, #{price,jdbcType=VARCHAR}, 
+      #{volume,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, #{time,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.bituniverse.websocket.entity.OkexDealRecord">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
@@ -27,6 +28,9 @@
     </selectKey>
     insert into okex_deal_record
     <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="exchangeId != null">
+        exchange_id,
+      </if>
       <if test="coinId != null">
         coin_id,
       </if>
@@ -44,6 +48,9 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="exchangeId != null">
+        #{exchangeId,jdbcType=INTEGER},
+      </if>
       <if test="coinId != null">
         #{coinId,jdbcType=INTEGER},
       </if>
@@ -63,7 +70,8 @@
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.bituniverse.websocket.entity.OkexDealRecord">
     update okex_deal_record
-    set coin_id = #{coinId,jdbcType=INTEGER},
+    set exchange_id = #{exchangeId,jdbcType=INTEGER},
+      coin_id = #{coinId,jdbcType=INTEGER},
       price = #{price,jdbcType=VARCHAR},
       volume = #{volume,jdbcType=VARCHAR},
       type = #{type,jdbcType=INTEGER},
@@ -73,6 +81,9 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.bituniverse.websocket.entity.OkexDealRecord">
     update okex_deal_record
     <set>
+      <if test="exchangeId != null">
+        exchange_id = #{exchangeId,jdbcType=INTEGER},
+      </if>
       <if test="coinId != null">
         coin_id = #{coinId,jdbcType=INTEGER},
       </if>
@@ -106,6 +117,9 @@
     <include refid="Base_Column_List" />
     from okex_deal_record
     where 1=1 
+    <if test="exchangeId != null">
+       and  exchange_id = #{exchangeId,jdbcType=INTEGER}
+    </if>
     <if test="coinId != null">
        and  coin_id = #{coinId,jdbcType=INTEGER}
     </if>
@@ -128,6 +142,9 @@
     <include refid="Base_Column_List" />
     from okex_deal_record
     where 1=1 
+    <if test="exchangeId != null">
+       and  exchange_id = #{exchangeId,jdbcType=INTEGER}
+    </if>
     <if test="coinId != null">
        and  coin_id = #{coinId,jdbcType=INTEGER}
     </if>
@@ -149,6 +166,9 @@
     select count(*) 
     from okex_deal_record 
     where 1=1 
+    <if test="exchangeId != null">
+       and  exchange_id = #{exchangeId,jdbcType=INTEGER}
+    </if>
     <if test="coinId != null">
        and  coin_id = #{coinId,jdbcType=INTEGER}
     </if>

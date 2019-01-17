@@ -496,6 +496,7 @@ public class OKCoinServiceImpl implements WebSocketService {
         okexDealRecord.setType(type);
         okexDealRecord.setVolume(volume);
         okexDealRecord.setCoinId(coinId);
+        okexDealRecord.setExchangeId(EnumExchange.OKEX.getExchangId());
         okexDealRecordService.insertSelective(okexDealRecord);
     }
 

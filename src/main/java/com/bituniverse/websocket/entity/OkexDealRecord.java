@@ -3,9 +3,11 @@ package com.bituniverse.websocket.entity;
 import java.io.Serializable;
 
 public class OkexDealRecord implements Serializable {
-    private static final long serialVersionUID = 4068458636502524185L;
+    private static final long serialVersionUID = 8754671959768130606L;
 
     private Integer id;
+
+    private Integer exchangeId;
 
     private Integer coinId;
 
@@ -23,6 +25,14 @@ public class OkexDealRecord implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getExchangeId() {
+        return exchangeId;
+    }
+
+    public void setExchangeId(Integer exchangeId) {
+        this.exchangeId = exchangeId;
     }
 
     public Integer getCoinId() {
@@ -73,6 +83,7 @@ public class OkexDealRecord implements Serializable {
         sb.append("Hash = ").append(hashCode());
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append(", id=").append(id);
+        sb.append(", exchangeId=").append(exchangeId);
         sb.append(", coinId=").append(coinId);
         sb.append(", price=").append(price);
         sb.append(", volume=").append(volume);
