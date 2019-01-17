@@ -352,6 +352,7 @@ public class OKCoinServiceImpl implements WebSocketService {
             resultMap.put("price",price.toString());
             resultMap.put("total", total);
             resultMap.put("size", data.get(2));
+            resultMap.put("exchangeId", superOrder.getExchangeId());
             RedisUtil.addListRight(redis, String.format(RedisKey.SUPER_ORDER, EnumExchange.OKEX.getExchangId(), coin), resultMap);
         }
     }
