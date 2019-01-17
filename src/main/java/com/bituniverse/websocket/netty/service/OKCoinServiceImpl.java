@@ -262,11 +262,11 @@ public class OKCoinServiceImpl implements WebSocketService {
                 common(c2, "mid", type, total);
             }
             //单项成交额
-            String sum = RedisUtil.searchString(redis,String.format(RedisKey.COIN_FUND_DISTRIBUTION_TOTAL, EnumExchange.OKEX.getExchangId(), c2, type));
+            String sum = RedisUtil.searchString(redis,String.format(RedisKey.COIN_FUND_DISTRIBUTION_TOTAL, EnumExchange.OKEX.getExchangId(), coin, type));
             if(StrUtils.isBlank(sum)){
-                RedisUtil.addString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_TOTAL, EnumExchange.OKEX.getExchangId(), c2, type), total.toString());
+                RedisUtil.addString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_TOTAL, EnumExchange.OKEX.getExchangId(), coin, type), total.toString());
             }else {
-                RedisUtil.addString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_TOTAL, EnumExchange.OKEX.getExchangId(), c2, type), new BigDecimal(sum).add(total).toString());
+                RedisUtil.addString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_TOTAL, EnumExchange.OKEX.getExchangId(), coin, type), new BigDecimal(sum).add(total).toString());
             }
             //交易额均值
             total = total.add(averageBigdecimal.multiply(amountBigdecimal)).divide(amountBigdecimal.add(new BigDecimal(1)),8, BigDecimal.ROUND_HALF_UP);
