@@ -372,7 +372,7 @@ public class OKCoinServiceImpl implements WebSocketService {
             dayState = new DayState();
         }
         Map<Object, Object> map = new HashMap<>();
-        map.put("exchangeid", EnumExchange.OKEX.getExchangId());
+        map.put("exchangeId", EnumExchange.OKEX.getExchangId());
         map.put("coin", coin);
         List<CoinData> list = coinDataService.selectAll(map);
         CoinData coinData;
