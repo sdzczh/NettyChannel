@@ -374,6 +374,7 @@ public class OKCoinServiceImpl implements WebSocketService {
         Map<Object, Object> map = new HashMap<>();
         map.put("exchangeId", EnumExchange.OKEX.getExchangId());
         map.put("coin", coin);
+        dayState.setExchangeId(EnumExchange.OKEX.getExchangId());
         List<CoinData> list = coinDataService.selectAll(map);
         CoinData coinData;
         if(list != null && list.size() != 0){
@@ -388,8 +389,8 @@ public class OKCoinServiceImpl implements WebSocketService {
         String outKey = String.format(RedisKey.DAY_OUT_ORDER, coin);
         //之前记录的今日交易卖出总金额
         String oldOut = RedisUtil.searchString(redis, outKey);*/
-        String oldIn = dayState == null ? null : dayState.getDayIn();
-        String oldOut = dayState == null ? null : dayState.getDayOut();
+        String oldIn = dayState.getDayIn() == null ? "0" : dayState.getDayIn();
+        String oldOut = dayState.getDayOut() == null ? "0" : dayState.getDayOut();
         if("bid".equals(side)){
             if(!"".equals(oldIn) && oldIn != null){
                 total = total.add(new BigDecimal(oldIn));
@@ -507,13 +508,7 @@ public class OKCoinServiceImpl implements WebSocketService {
      * @return
      */
     public DayState getDayState(String coin){
-        String inKey = String.format(RedisKey.DAY_IN_ORDER, EnumExchange.OKEX.getExchangId(), coin);
-        String oldIn = RedisUtil.searchString(redis, inKey);
-        String outKey = String.format(RedisKey.DAY_OUT_ORDER, EnumExchange.OKEX.getExchangId(), coin);
-        String oldOut = RedisUtil.searchString(redis, outKey);
-        String actual = RedisUtil.searchString(redis, String.format(RedisKey.DAY_ACTUAL_ORDER, EnumExchange.OKEX.getExchangId(), coin));
-        String ratio = RedisUtil.searchString(redis, String.format(RedisKey.DAY_ACTUALPARENT_ORDER, EnumExchange.OKEX.getExchangId(), coin));
-        if(StrUtils.isNotEmptyBatch(oldIn, oldOut, actual, ratio)){
+
             Map<Object, Object> map = new HashMap<>();
             map.put("coin", coin);
             map.put("exchangeId", EnumExchange.OKEX.getExchangId());
@@ -522,20 +517,6 @@ public class OKCoinServiceImpl implements WebSocketService {
                 return list.get(0);
             }
             return null;
-        }else{
-            DayState dayState = new DayState();
-            if("BTC".equals(coin)){
-                dayState.setId(1);
-            }else{
-                dayState.setId(2);
-            }
-            dayState.setActual(actual);
-            dayState.setCoin(coin);
-            dayState.setDayIn(oldIn);
-            dayState.setExchangeId(EnumExchange.OKEX.getExchangId());
-            dayState.setDayOut(oldOut);
-            dayState.setRatio(ratio);
-            return dayState;
-        }
+
     }
 }
