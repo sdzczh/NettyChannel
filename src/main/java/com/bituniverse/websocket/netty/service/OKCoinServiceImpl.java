@@ -201,7 +201,7 @@ public class OKCoinServiceImpl implements WebSocketService {
         Map<Object, Object> map = new HashMap<>();
         map.put("c1", c1);
         map.put("c2", c2);
-        map.put("exchangeid", exchangId);
+        map.put("exchangeId", exchangId);
         List<CoinPrice> list = coinPriceService.selectAll(map);
         if(list != null && list.size() != 0){
             CoinPrice coinPrice = list.get(0);
@@ -516,7 +516,7 @@ public class OKCoinServiceImpl implements WebSocketService {
         if(StrUtils.isNotEmptyBatch(oldIn, oldOut, actual, ratio)){
             Map<Object, Object> map = new HashMap<>();
             map.put("coin", coin);
-            map.put("exchangeid", EnumExchange.OKEX.getExchangId());
+            map.put("exchangeId", EnumExchange.OKEX.getExchangId());
             List<DayState> list = dayStateService.selectAll(map);
             if(list != null && list.size() !=0){
                 return list.get(0);
