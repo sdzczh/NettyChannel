@@ -19,7 +19,12 @@ public class Run {
         WebSoketClient client = new WebSoketClient(okcoinServer, service);
         log.info("websocket--okcoin链接建立");
         // 启动客户端
-        client.start();
+        try {
+            client.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+            client.start();
+        }
 
         // 添加订阅btc_usd, eth_usd K-line
        /* client.addChannel("ok_sub_spot_btc_usdt_kline_1min");
