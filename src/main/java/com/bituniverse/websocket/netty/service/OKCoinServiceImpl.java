@@ -436,7 +436,9 @@ public class OKCoinServiceImpl implements WebSocketService {
         //详情页title 价格
         RedisUtil.addHashString(redis, priceChangeRedisKey, "price", price);
         //详情页title 价格变化
-        String oldPrice = coinPriceService.getPrice(1, CoinType.getCode(coin), EnumExchange.OKEX.getExchangId());
+        String oldRedisKey = String.format(RedisKey.COIN_PRICE_OLD, EnumExchange.OKEX.getExchangId(), CoinType.getCode(coin));
+//        String oldPrice = coinPriceService.getPrice(1, CoinType.getCode(coin), EnumExchange.OKEX.getExchangId());
+        String oldPrice = RedisUtil.searchString(redis, oldRedisKey);
         RedisUtil.addHashString(redis, priceChangeRedisKey, "24hchange_price", new BigDecimal(price).subtract(new BigDecimal(oldPrice)).toString());
         BigDecimal priceChange = new BigDecimal(price).subtract(new BigDecimal(oldPrice));
         //详情页title 价格变化百分比

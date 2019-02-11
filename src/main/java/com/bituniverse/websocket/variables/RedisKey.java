@@ -23,6 +23,8 @@ public class RedisKey {
 	public static final String USDT_PRICE = "bituniverse:price:usdt:%s";
 	//币对最新价格  交易所：交易币: 计价币  c2:c1
 	public static final String COIN_PRICE = "bituniverse:price:%s:%s:%s";
+	//币对当日价格（凌晨记录）  交易所：交易币 计价币为cny
+	public static final String COIN_PRICE_OLD = "bituniverse:price:old:%s:%s";
 
 	//超级大单 交易所：交易币 (c2)
 	public static final String SUPER_ORDER = "bituniverse:superOrder:%s:%s";
