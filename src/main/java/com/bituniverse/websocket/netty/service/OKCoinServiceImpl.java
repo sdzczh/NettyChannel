@@ -459,13 +459,13 @@ public class OKCoinServiceImpl implements WebSocketService {
         RedisUtil.addHashString(redis, priceChangeRedisKey, "usdt_price", usdtPrice);
         //24小时最高价
         String dayHigh = RedisUtil.searchHashString(redis, priceChangeRedisKey, "24h_high");
-        if("".equals(dayHigh) || dayHigh == null  || new BigDecimal(dayHigh).compareTo(new BigDecimal(price)) == -1){
+        if("".equals(dayHigh) || dayHigh == null  || new BigDecimal(dayHigh).compareTo(new BigDecimal(price)) < 0){
             dayHigh = price;
             RedisUtil.addHashString(redis, priceChangeRedisKey, "24h_high", dayHigh);
         }
         //24小时最低价
         String dayLow = RedisUtil.searchHashString(redis, priceChangeRedisKey, "24h_low");
-        if("".equals(dayLow) || dayLow == null || new BigDecimal(price).compareTo(new BigDecimal(dayLow)) == -1){
+        if("".equals(dayLow) || dayLow == null || new BigDecimal(price).compareTo(new BigDecimal(dayLow)) < 0){
             dayLow = price;
             RedisUtil.addHashString(redis, priceChangeRedisKey, "24h_low", dayLow);
         }
