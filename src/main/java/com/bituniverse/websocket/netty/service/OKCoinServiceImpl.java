@@ -8,8 +8,7 @@ import com.bituniverse.websocket.service.*;
 import com.bituniverse.websocket.utils.*;
 import com.bituniverse.websocket.enums.CoinType;
 import com.bituniverse.websocket.enums.EnumExchange;
-import com.bituniverse.websocket.enums.EnumScene;
-import com.bituniverse.websocket.netty.WebSocketService;
+     import com.bituniverse.websocket.netty.WebSocketService;
 import com.bituniverse.websocket.variables.RedisKey;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -241,17 +240,6 @@ public class OKCoinServiceImpl implements WebSocketService {
             //小单
             if(total.compareTo(averageBigdecimal) == -1){
                 common(c2, "small", type, total);
-                /*String small = RedisUtil.searchString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "small", type));
-                String num = RedisUtil.searchString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "num", type));
-                if(!StrUtils.isBlank(small) && !StrUtils.isBlank(num)) {
-                    BigDecimal smallBig = new BigDecimal(small);
-                    BigDecimal numBig = new BigDecimal(num);
-                    RedisUtil.addString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "small", type), smallBig.add(total).toString());
-                    RedisUtil.addString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "num", type), numBig.add(new BigDecimal(1)).toString());
-                }else{
-                    RedisUtil.addString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "small", type), total.toString());
-                    RedisUtil.addString(redis, String.format(RedisKey.COIN_FUND_DISTRIBUTION_DETAILS, EnumExchange.OKEX.getExchangId(), c2, "num", type), "1");
-                }*/
             }
             //大单
             else if(averageBigdecimal.multiply(new BigDecimal(10)).compareTo(total) == -1){
@@ -322,10 +310,6 @@ public class OKCoinServiceImpl implements WebSocketService {
 
     /**
      * 获取超级大单
-     * @param coin
-     * @param total
-     * @param data
-     * @param usdtPrice
      */
     public void getSuperOrder(String coin, BigDecimal total, JSONArray data, String usdtPrice) {
         Map<String, Object> resultMap = new HashMap<>();
@@ -437,7 +421,6 @@ public class OKCoinServiceImpl implements WebSocketService {
         RedisUtil.addHashString(redis, priceChangeRedisKey, "price", price);
         //详情页title 价格变化
         String oldRedisKey = String.format(RedisKey.COIN_PRICE_OLD, EnumExchange.OKEX.getExchangId(), CoinType.getCode(coin));
-//        String oldPrice = coinPriceService.getPrice(1, CoinType.getCode(coin), EnumExchange.OKEX.getExchangId());
         String oldPrice = RedisUtil.searchString(redis, oldRedisKey);
         RedisUtil.addHashString(redis, priceChangeRedisKey, "24hchange_price", new BigDecimal(price).subtract(new BigDecimal(oldPrice)).toString());
         BigDecimal priceChange = new BigDecimal(price).subtract(new BigDecimal(oldPrice));
