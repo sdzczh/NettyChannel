@@ -493,15 +493,14 @@ public class OKCoinServiceImpl implements WebSocketService {
      * @return
      */
     public DayState getDayState(String coin){
-
-            Map<Object, Object> map = new HashMap<>();
-            map.put("coin", coin);
-            map.put("exchangeId", EnumExchange.OKEX.getExchangId());
-            List<DayState> list = dayStateService.selectAll(map);
-            if(list != null && list.size() !=0){
-                return list.get(0);
-            }
-            return null;
+        Map<Object, Object> map = new HashMap<>();
+        map.put("coin", coin);
+        map.put("exchangeId", EnumExchange.OKEX.getExchangId());
+        List<DayState> list = dayStateService.selectAll(map);
+        if(list != null && list.size() !=0){
+            return list.get(0);
+        }
+        return null;
 
     }
 }
