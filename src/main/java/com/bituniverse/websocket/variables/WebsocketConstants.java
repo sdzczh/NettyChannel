@@ -11,8 +11,8 @@ public class WebsocketConstants {
 	public static final int SCENE_KLine2 = 3522;
 	public static final int SCENE_ORDER = 350;
 	
-	/*okcoin*/
-	public static final String OKCOINURL = "https://www.okcoin.com";
+	/*OkCoinStart*/
+	public static final String OKCOINURL = "https://www.OkCoinStart.com";
 	//Get /api/v1/ticker  取OKCoin行情
 	public static final String TICKER = OKCOINURL + "/api/v1/ticker.do?symbol=%s_usd";
 	//Get /api/v1/trades 获取OKCoin交易信息(60条)
@@ -20,7 +20,7 @@ public class WebsocketConstants {
 	//Get /api/v1/kline 获取OKCoin的K线数据
 	public static final String KLINE = OKCOINURL + "/api/v1/kline.do?symbol=%s_usd&type=%s&size=%s&since=%s";
 	
-	public static final String OKCOINSERVERURL = "wss://real.okcoin.com:10440/websocket";
+	public static final String OKCOINSERVERURL = "wss://real.OkCoinStart.com:10440/websocket";
 	
 	//public static final String YBSERVERURL = "ws://wangbian6789.kmdns.net:9999";//本机
 	public static final String YBSERVERURL = "ws://39.106.20.211:1606";//测试环境

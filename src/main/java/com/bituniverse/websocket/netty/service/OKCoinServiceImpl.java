@@ -27,7 +27,7 @@ import java.util.Map;
 /**
  * 订阅信息处理类需要实现WebSocketService接口
  *
- * @author okcoin
+ * @author OkCoinStart
  */
 @Service
 @Transactional
@@ -49,12 +49,6 @@ public class OKCoinServiceImpl implements WebSocketService {
     @Autowired
     private CapDistributionService capDistributionService;
 
-    static {
-        //ClassPathXmlApplicationContext appCtx = new ClassPathXmlApplicationContext("applicationContext.xml");
-        //redis = (RedisTemplate<String, Object>) appCtx.getBean("redis");
-    }
-    PriceConversionUtils pu = new PriceConversionUtils();
-
     @Override
     public void onReceive(String msg) {
         try {
@@ -66,27 +60,7 @@ public class OKCoinServiceImpl implements WebSocketService {
                 JSONArray result = (JSONArray) json;
                 JSONObject resultObj = result.getJSONObject(0);
                 String channel = resultObj.getString("channel");
-                if (channel.contains("depth")) {
-                    String[] strArr = channel.split("_");
-                    String c2 = strArr[3].toUpperCase();
-                    String c1 = strArr[4].toUpperCase();
-                    log.info("收到okcoin服务器数据最新深度变化【" + c2 + " - " + c1 +"】：" + resultObj.toJSONString());
-                    JSONObject data = resultObj.getJSONObject("data");
-
-                    /*----------------------------------------发送深度广播-----------------------------------------------------------*/
-                    JSONObject broadcast = new JSONObject();
-                    broadcast.put("action", "broadcast");
-                    JSONObject broadcastData = new JSONObject();
-                    /*switch (c1){
-                        case "BTC" : broadcastData.put("scene", EnumScene.SCENEN_DETAILS_OKEX_DEPTH_BTC);
-                        case "ETH" : broadcastData.put("scene", EnumScene.SCENEN_DETAILS_OKEX_DEPTH_ETH);
-                        default : broadcastData.put("scene", -1);
-                    }*/
-                    broadcastData.put("coin", c2);
-                    broadcastData.put("info", data);
-                    broadcast.put("data", broadcastData);
-                    WebsocketClientUtils.sendTextMessage(broadcast.toJSONString());
-                }else if (channel.contains("deals")) {
+                if (channel.contains("deals")) {
                     String[] strArr = channel.split("_");
                     String c2 = strArr[3].toUpperCase();
                     JSONArray data = resultObj.getJSONArray("data").getJSONArray(0);
@@ -131,53 +105,7 @@ public class OKCoinServiceImpl implements WebSocketService {
                             //饼图数据
                             getFundDistribution(c2, total, data);
                         }
-                        /*JSONObject broadcast = new JSONObject();
-                        broadcast.put("action", "broadcast");
-                        JSONObject broadcastData = new JSONObject();
-                        Integer c1 = CoinType.getCode(coin);
-                        broadcastData.put("scene", EnumScene.SCENEN_INDEX_OKEX);
-                        broadcastData.put("info", price);
-                        broadcastData.put("c2", CoinType.getCode(c2));
-                        broadcastData.put("c1", c1);
-                        broadcastData.put("exchangeId", EnumExchange.OKEX.getExchangId());
-                        broadcast.put("data", broadcastData);
-                        WebsocketClientUtils.sendTextMessage(broadcast.toJSONString());*/
                     }
-                }else if (channel.contains("kline")) {
-                    /*String[] strArr = channel.split("_");
-                    String c2 = strArr[3].toUpperCase();
-                    String c1 = strArr[4].toUpperCase();
-                    log.info("收到okcoin服务器数据最新K-line变化【" + c2 + " - " + c1 +"】：" + resultObj.toJSONString());
-                    JSONArray data = resultObj.getJSONArray("data");
-                    JSONArray array = data.getJSONArray(0);
-                    Long timestamp = array.getLong(0);
-                    BigDecimal open = array.getBigDecimal(1);
-                    BigDecimal high = array.getBigDecimal(2);
-                    BigDecimal low = array.getBigDecimal(3);
-                    BigDecimal price = array.getBigDecimal(4);
-                    BigDecimal amount = array.getBigDecimal(5);
-                    if (price == null) price = new BigDecimal(0);
-                    Map<String, Object> params = new HashMap<>();
-                    params.put("amount", amount);
-                    params.put("close", price);
-                    params.put("time", DateUtils.stampToDate(String.valueOf(timestamp)));
-                    params.put("high", high);
-                    params.put("low", low);
-                    params.put("open", open);
-                    *//*----------------------------------------发送线广播-----------------------------------------------------------*//*
-                    JSONObject broadcast = new JSONObject();
-                    broadcast.put("action", "broadcast");
-                    JSONObject broadcastData = new JSONObject();
-                    *//*switch (c1){
-                        case "BTC" : broadcastData.put("scene", EnumScene.SCENEN_DETAILS_OKEX_KLINE_BTC); break;
-                        case "ETH" : broadcastData.put("scene", EnumScene.SCENEN_DETAILS_OKEX_KLINE_ETH); break;
-                        default : broadcastData.put("scene", -1);
-                    }*//*
-                    broadcastData.put("scene", EnumScene.SCENEN_DETAILS_OKEX);
-                    broadcastData.put("coin", c2);
-                    broadcastData.put("info", params);
-                    broadcast.put("data", broadcastData);
-                    WebsocketClientUtils.sendTextMessage(broadcast.toJSONString());*/
                 }
                 if (channel.equals("addChannel")) {
                     log.info("okcoin数据订阅成功:" + resultObj.toJSONString());
