@@ -38,6 +38,7 @@ public class RedisKey {
 	public static final String DAY_ACTUALPARENT_ORDER = "bituniverse:dayState:parent:%s:%s";
 	//币种详情 交易所：交易币 (c2)
 	public static final String COIN_DETAILS = "bituniverse:details:%s:%s";
+
 	//资金分布饼图 交易所：交易币 (c2)
 	public static final String COIN_FUND_DISTRIBUTION = "bituniverse:fundDistribution:%s:%s";
 	//资金分布饼图 大小单 数量 额度 交易所：交易币 (c2) 数量/额度 流入/流出
