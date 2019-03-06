@@ -73,8 +73,6 @@ public class OKCoinServiceImpl implements WebSocketService {
                     }else{
                         RedisUtil.addHashString(redis, String.format(RedisKey.COIN_DETAILS, EnumExchange.OKEX.getExchangId(), CoinType.getCode(c2)), "usdt_amount", usdtAmount.toString());
                     }
-
-                    /*----------------------------------------发送最新价格广播-----------------------------------------------------------*/
                     List<String> list = new ArrayList<>();
                     list.add("USDT");
                     list.add("CNY");
@@ -295,12 +293,6 @@ public class OKCoinServiceImpl implements WebSocketService {
             coinData = new CoinData();
         }
         String side = data.get(4).toString();
-        /*String inKey = String.format(RedisKey.DAY_IN_ORDER, coin);
-        //之前记录的今日交易买入总金额
-        String oldIn = RedisUtil.searchString(redis, inKey);
-        String outKey = String.format(RedisKey.DAY_OUT_ORDER, coin);
-        //之前记录的今日交易卖出总金额
-        String oldOut = RedisUtil.searchString(redis, outKey);*/
         String oldIn = dayState.getDayIn() == null ? "0" : dayState.getDayIn();
         String oldOut = dayState.getDayOut() == null ? "0" : dayState.getDayOut();
         if("bid".equals(side)){
