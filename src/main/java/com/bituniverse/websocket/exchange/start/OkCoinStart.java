@@ -29,11 +29,13 @@ public class OkCoinStart {
             client.start();
         }
         //订阅最新价格
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("op", "subscribe");
+        client.sendText("{\"op\": \"subscribe\", \"args\": [\"spot/depth5:ETH-USDT\"]}");
+        /*JSONObject jsonObject = new JSONObject();
         JSONArray jsonArray = new JSONArray();
         jsonArray.add("spot/depth5:ETH-USDT");
         jsonObject.put("args", jsonArray);
-        client.addChannel(jsonObject.toJSONString());
+        jsonObject.put("op", "subscribe");
+        System.out.println(jsonObject);
+        client.addChannel(jsonObject.toString());*/
     }
 }

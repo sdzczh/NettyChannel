@@ -56,7 +56,7 @@ public class OKCoinServiceImpl implements WebSocketService {
             if (json instanceof JSONObject) {
                 log.info("收到okcoin服务器数据jsonObject：" + ((JSONObject)json).toJSONString());
             }
-            if (json instanceof JSONArray) {
+            /*if (json instanceof JSONArray) {
                 JSONArray result = (JSONArray) json;
                 JSONObject resultObj = result.getJSONObject(0);
                 String channel = resultObj.getString("channel");
@@ -108,7 +108,7 @@ public class OKCoinServiceImpl implements WebSocketService {
                 if (channel.equals("addChannel")) {
                     log.info("okcoin数据订阅成功:" + resultObj.toJSONString());
                 }
-            }
+            }*/
         } catch (Exception e) {
             e.printStackTrace();
         }
