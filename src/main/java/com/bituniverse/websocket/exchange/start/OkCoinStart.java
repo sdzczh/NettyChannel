@@ -1,8 +1,11 @@
 package com.bituniverse.websocket.exchange.start;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.bituniverse.websocket.netty.WebSocketService;
 import com.bituniverse.websocket.netty.WebSoketClient;
 import com.bituniverse.websocket.utils.PropertyUtils;
+import com.google.gson.JsonObject;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -26,7 +29,11 @@ public class OkCoinStart {
             client.start();
         }
         //订阅最新价格
-        client.addChannel("ok_sub_spot_btc_usdt_deals");
-        client.addChannel("ok_sub_spot_eth_usdt_deals");
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("op", "subscribe");
+        JSONArray jsonArray = new JSONArray();
+        jsonArray.add("spot/depth5:ETH-USDT");
+        jsonObject.put("args", jsonArray);
+        client.addChannel(jsonObject.toJSONString());
     }
 }
