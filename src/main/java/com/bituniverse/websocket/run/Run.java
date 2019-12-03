@@ -8,9 +8,6 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class Run {
     public static void main(String[] args) {
-//        OkCoinStart.start();
-        WebsocketClientUtils2.sendTextMessage("{\"action\":\"join\",\"data\":{\n" +
-                "\"scene\":350\n" +
-                "}}");
+        OkCoinStart.start();
     }
 }

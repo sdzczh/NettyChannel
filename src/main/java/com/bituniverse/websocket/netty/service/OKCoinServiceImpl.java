@@ -99,7 +99,6 @@ public class OKCoinServiceImpl implements WebSocketService {
             map.put("num", asksArray.size() - i);
             buys.add(map);
         }
-        log.info("发送现货数据包:" + json.toString());
         json.put("buys", buys);
         json.put("sales", sales);
         JSONObject broadcast = new JSONObject();
