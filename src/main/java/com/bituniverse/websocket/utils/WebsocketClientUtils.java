@@ -20,7 +20,7 @@ public class WebsocketClientUtils {
 	}
 	public static void sessionConnectMethod(){
 		PropertyUtils pt = new PropertyUtils("serverUrl.properties");
-		String YBWebSocketServer = pt.getProperty("OKCOIN.WEBSOCKET");
+		String YBWebSocketServer = pt.getProperty("SERVER.WEBSOCKET");
 		/*if (client != null) {
 			client.close();
 		}*/

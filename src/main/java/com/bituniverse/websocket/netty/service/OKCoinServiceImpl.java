@@ -116,6 +116,6 @@ public class OKCoinServiceImpl implements WebSocketService {
         broadcastData.put("info", json);
         broadcast.put("data", broadcastData);
         broadcast.put("action", "broadcast");
-        WebsocketClientUtils2.sendTextMessage(broadcast.toJSONString());
+        WebsocketClientUtils.sendTextMessage(broadcast.toJSONString());
     }
 }
