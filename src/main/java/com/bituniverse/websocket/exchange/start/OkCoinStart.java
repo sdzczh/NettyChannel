@@ -29,7 +29,7 @@ public class OkCoinStart {
             client.start();
         }
         //订阅最新价格
-        client.sendText("{\"op\": \"subscribe\", \"args\": [\"spot/depth5:ETH-USDT\"]}");
+        client.sendText("{\"op\": \"subscribe\", \"args\": [\"spot/depth5:EOS-USDT\"]}");
         /*JSONObject jsonObject = new JSONObject();
         JSONArray jsonArray = new JSONArray();
         jsonArray.add("spot/depth5:ETH-USDT");

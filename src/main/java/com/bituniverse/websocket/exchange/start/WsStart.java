@@ -25,5 +25,8 @@ public class WsStart {
             e.printStackTrace();
             client.start();
         }
+        client.sendText("{\"action\":\"join\",\"data\":{\n" +
+                "\"scene\":350\n" +
+                "}}");
     }
 }
