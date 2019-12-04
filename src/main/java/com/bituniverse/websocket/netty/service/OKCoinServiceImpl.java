@@ -39,16 +39,6 @@ public class OKCoinServiceImpl implements WebSocketService {
     private RedisTemplate<String, String> redis;
     @Autowired
     private OkexDealRecordService okexDealRecordService;
-    @Autowired
-    private CoinDataService coinDataService;
-    @Autowired
-    private SuperOrderService superOrderService;
-    @Autowired
-    private CoinPriceService coinPriceService;
-    @Autowired
-    private DayStateService dayStateService;
-    @Autowired
-    private CapDistributionService capDistributionService;
 
     @Override
     public void onReceive(String msg) {
@@ -111,7 +101,7 @@ public class OKCoinServiceImpl implements WebSocketService {
         JSONObject broadcastData = new JSONObject();
         broadcastData.put("c1", CoinType.getCode(unionCoin));
         broadcastData.put("c2", CoinType.getCode(orderCoin));
-        broadcastData.put("scene", 3522);
+        broadcastData.put("scene", 350);
         broadcastData.put("gear", 0);
         broadcastData.put("info", json);
         broadcast.put("data", broadcastData);
