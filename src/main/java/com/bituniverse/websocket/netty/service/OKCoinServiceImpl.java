@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.bituniverse.websocket.Constants;
 import com.bituniverse.websocket.entity.*;
+import com.bituniverse.websocket.enums.EnumScene;
 import com.bituniverse.websocket.service.*;
 import com.bituniverse.websocket.utils.*;
 import com.bituniverse.websocket.enums.CoinType;
@@ -54,9 +55,55 @@ public class OKCoinServiceImpl implements WebSocketService {
             if(Constants.TABLE_DEPTH.equals(table)){
                 depthOrderChannel(data);
             }
+            //TIKER订阅
+            if(Constants.TABLE_TICKER.equals(table)){
+                tikerChannel(data);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * TIKER订阅处理
+     * @param data
+     */
+    private void tikerChannel(JSONArray data) {
+        Map<String, Object> map = new HashMap<>();
+        JSONObject jsonObject = data.getJSONObject(0);
+        BigDecimal price = new BigDecimal(jsonObject.getString("last")).setScale(2, BigDecimal.ROUND_HALF_UP);
+        BigDecimal cnyPrice = price.multiply(new BigDecimal(7.1)).setScale(2, BigDecimal.ROUND_HALF_UP);
+        BigDecimal vol = new BigDecimal(jsonObject.getString("quote_volume_24h")).setScale(0, BigDecimal.ROUND_HALF_UP);
+        BigDecimal percentage = new BigDecimal(jsonObject.getString("open_24h")).subtract(price).divide(new BigDecimal(jsonObject.getString("open_24h")), 2, BigDecimal.ROUND_HALF_UP);
+        //usdt价格
+        map.put("newPrice", price.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString());
+        //cny价格
+        map.put("newPriceCNY", cnyPrice.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString());
+        //交易量
+        map.put("sumAmount", vol.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString());
+        //百分比
+        map.put("chgPrice", percentage.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString());
+        //币种
+        String instrument = jsonObject.getString("instrument_id");
+        String orderCoin = instrument.substring(0, instrument.indexOf("-"));
+        String unionCoin = instrument.substring(orderCoin.length() + 1);
+        map.put("orderCoinType", orderCoin);
+        map.put("unitCoinType", unionCoin);
+        map.put("orderCoinCnName", CoinType.getName(Integer.valueOf(orderCoin)));
+        map.put("orderCoinName", CoinType.getName(Integer.valueOf(orderCoin)));
+        map.put("unitCoinName", CoinType.getName(Integer.valueOf(unionCoin)));
+        map.put("high", new BigDecimal(jsonObject.getString("high_24h")).setScale(2, BigDecimal.ROUND_HALF_UP));
+        map.put("low", new BigDecimal(jsonObject.getString("low_24h")).setScale(2, BigDecimal.ROUND_HALF_UP));
+        JSONObject broadcastData = new JSONObject();
+        broadcastData.put("c1", CoinType.getCode(unionCoin));
+        broadcastData.put("c2", CoinType.getCode(orderCoin));
+        broadcastData.put("scene", EnumScene.SCENE_MARKET_YIBI.getScene());
+        broadcastData.put("gear", 0);
+        broadcastData.put("info", map);
+        JSONObject broadcast = new JSONObject();
+        broadcast.put("data", broadcastData);
+        broadcast.put("action", "okBroadcast");
+        WebsocketClientUtils.sendTextMessage(broadcast.toJSONString());
     }
 
     /**
@@ -92,8 +139,6 @@ public class OKCoinServiceImpl implements WebSocketService {
         json.put("buys", buys);
         json.put("sales", sales);
         JSONObject broadcast = new JSONObject();
-        broadcast.put("action", "broadcast");
-
         String instrument = okResult.getString("instrument_id");
         String orderCoin = instrument.substring(0, instrument.indexOf("-"));
         String unionCoin = instrument.substring(orderCoin.length() + 1);
@@ -101,7 +146,7 @@ public class OKCoinServiceImpl implements WebSocketService {
         JSONObject broadcastData = new JSONObject();
         broadcastData.put("c1", CoinType.getCode(unionCoin));
         broadcastData.put("c2", CoinType.getCode(orderCoin));
-        broadcastData.put("scene", 350);
+        broadcastData.put("scene", EnumScene.SCENE_ORDER.getScene());
         broadcastData.put("gear", 0);
         broadcastData.put("info", json);
         broadcast.put("data", broadcastData);
