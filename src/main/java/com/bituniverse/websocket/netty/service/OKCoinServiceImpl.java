@@ -84,9 +84,9 @@ public class OKCoinServiceImpl implements WebSocketService {
         String unionCoin = instrument.substring(orderCoin.length() + 1);
         map.put("orderCoinType", orderCoin);
         map.put("unitCoinType", unionCoin);
-        map.put("orderCoinCnName", CoinType.getCoinName(Integer.valueOf(orderCoin)));
-        map.put("orderCoinName", CoinType.getCoinName(Integer.valueOf(orderCoin)));
-        map.put("unitCoinName", CoinType.getCoinName(Integer.valueOf(unionCoin)));
+        map.put("orderCoinCnName", orderCoin);
+        map.put("orderCoinName", orderCoin);
+        map.put("unitCoinName", unionCoin );
         map.put("high", new BigDecimal(jsonObject.getString("high_24h")).setScale(2, BigDecimal.ROUND_HALF_UP));
         map.put("low", new BigDecimal(jsonObject.getString("low_24h")).setScale(2, BigDecimal.ROUND_HALF_UP));
         JSONObject broadcastData = new JSONObject();
