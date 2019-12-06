@@ -4,14 +4,11 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.bituniverse.websocket.Constants;
-import com.bituniverse.websocket.entity.*;
 import com.bituniverse.websocket.enums.EnumScene;
 import com.bituniverse.websocket.service.*;
 import com.bituniverse.websocket.utils.*;
-import com.bituniverse.websocket.enums.CoinType;
-import com.bituniverse.websocket.enums.EnumExchange;
-     import com.bituniverse.websocket.netty.WebSocketService;
-import com.bituniverse.websocket.variables.RedisKey;
+import com.bituniverse.websocket.netty.WebSocketService;
+import com.bituniverse.websocket.variables.CoinType;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -20,9 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -89,9 +84,9 @@ public class OKCoinServiceImpl implements WebSocketService {
         String unionCoin = instrument.substring(orderCoin.length() + 1);
         map.put("orderCoinType", orderCoin);
         map.put("unitCoinType", unionCoin);
-        map.put("orderCoinCnName", CoinType.getName(Integer.valueOf(orderCoin)));
-        map.put("orderCoinName", CoinType.getName(Integer.valueOf(orderCoin)));
-        map.put("unitCoinName", CoinType.getName(Integer.valueOf(unionCoin)));
+        map.put("orderCoinCnName", CoinType.getCoinName(Integer.valueOf(orderCoin)));
+        map.put("orderCoinName", CoinType.getCoinName(Integer.valueOf(orderCoin)));
+        map.put("unitCoinName", CoinType.getCoinName(Integer.valueOf(unionCoin)));
         map.put("high", new BigDecimal(jsonObject.getString("high_24h")).setScale(2, BigDecimal.ROUND_HALF_UP));
         map.put("low", new BigDecimal(jsonObject.getString("low_24h")).setScale(2, BigDecimal.ROUND_HALF_UP));
         JSONObject broadcastData = new JSONObject();
