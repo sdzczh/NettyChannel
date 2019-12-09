@@ -78,7 +78,7 @@ public class OKCoinServiceImpl implements WebSocketService {
         String createTime = sdf2.format(sdf1.parse(jsonObject.getString("timestamp")));
         Integer orderType = "buy".equals(jsonObject.getString("side")) ? 0 : 1;
         map.put("price", price.setScale(2, BigDecimal.ROUND_HALF_UP).stripTrailingZeros().toPlainString());
-        map.put("amount", amount.setScale(2, BigDecimal.ROUND_HALF_UP).stripTrailingZeros().toPlainString());
+        map.put("amount", amount.setScale(6, BigDecimal.ROUND_HALF_UP).stripTrailingZeros().toPlainString());
         map.put("createTime", createTime);
         map.put("orderType", orderType);
 
