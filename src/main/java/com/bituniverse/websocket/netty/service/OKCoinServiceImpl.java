@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,9 +56,46 @@ public class OKCoinServiceImpl implements WebSocketService {
             if(Constants.TABLE_TICKER.equals(table)){
                 tikerChannel(data);
             }
+            if(Constants.TABLE_TRADE.equals(table)){
+                tradeChannel(data);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 成交处理
+     * @param data
+     */
+    private void tradeChannel(JSONArray data) throws ParseException {
+        Map<String, Object> map = new HashMap<>();
+        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+        SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        JSONObject jsonObject = data.getJSONObject(0);
+        BigDecimal price = new BigDecimal(jsonObject.getString("price"));
+        BigDecimal amount = new BigDecimal(jsonObject.getString("size"));
+        String createTime = sdf2.format(sdf1.parse(jsonObject.getString("timestamp")));
+        Integer orderType = "buy".equals(jsonObject.getString("side")) ? 0 : 1;
+        map.put("price", price.setScale(2, BigDecimal.ROUND_HALF_UP).stripTrailingZeros().toPlainString());
+        map.put("amount", amount.setScale(2, BigDecimal.ROUND_HALF_UP).stripTrailingZeros().toPlainString());
+        map.put("createTime", createTime);
+        map.put("orderType", orderType);
+
+        //币种
+        String instrument = jsonObject.getString("instrument_id");
+        String orderCoin = instrument.substring(0, instrument.indexOf("-"));
+        String unionCoin = instrument.substring(orderCoin.length() + 1);
+        JSONObject broadcastData = new JSONObject();
+        broadcastData.put("c1", CoinType.getCode(unionCoin));
+        broadcastData.put("c2", CoinType.getCode(orderCoin));
+        broadcastData.put("scene", EnumScene.SCENE_KLINE_YIBI.getScene());
+        broadcastData.put("gear", 0);
+        broadcastData.put("info", map);
+        JSONObject broadcast = new JSONObject();
+        broadcast.put("data", broadcastData);
+        broadcast.put("action", "okBroadcast");
+        WebsocketClientUtils.sendTextMessage(broadcast.toJSONString());
     }
 
     /**
