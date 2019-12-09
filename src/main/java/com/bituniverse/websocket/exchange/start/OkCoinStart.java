@@ -31,8 +31,15 @@ public class OkCoinStart {
         //订阅最新价格
         client.sendText("{\"op\": \"subscribe\", \"args\": [\"spot/depth5:BTC-USDT\"]}");
         client.sendText("{\"op\": \"subscribe\", \"args\": [\"spot/depth5:ETH-USDT\"]}");
-        client.sendText("{\"op\": \"subscribe\", \"args\": [\"spot/ticker:LTC-USDT\"]}");
+        client.sendText("{\"op\": \"subscribe\", \"args\": [\"spot/depth5:LTC-USDT\"]}");
+        client.sendText("{\"op\": \"subscribe\", \"args\": [\"spot/depth5:XRP-USDT\"]}");
+        client.sendText("{\"op\": \"subscribe\", \"args\": [\"spot/depth5:EOS-USDT\"]}");
+
+        client.sendText("{\"op\": \"subscribe\", \"args\": [\"spot/ticker:BTC-USDT\"]}");
         client.sendText("{\"op\": \"subscribe\", \"args\": [\"spot/ticker:ETH-USDT\"]}");
+        client.sendText("{\"op\": \"subscribe\", \"args\": [\"spot/ticker:LTC-USDT\"]}");
+        client.sendText("{\"op\": \"subscribe\", \"args\": [\"spot/ticker:EOS-USDT\"]}");
+        client.sendText("{\"op\": \"subscribe\", \"args\": [\"spot/ticker:XRP-USDT\"]}");
         /*JSONObject jsonObject = new JSONObject();
         JSONArray jsonArray = new JSONArray();
         jsonArray.add("spot/depth5:ETH-USDT");

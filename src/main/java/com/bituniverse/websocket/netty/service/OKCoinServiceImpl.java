@@ -82,8 +82,8 @@ public class OKCoinServiceImpl implements WebSocketService {
         String instrument = jsonObject.getString("instrument_id");
         String orderCoin = instrument.substring(0, instrument.indexOf("-"));
         String unionCoin = instrument.substring(orderCoin.length() + 1);
-        map.put("orderCoinType", orderCoin);
-        map.put("unitCoinType", unionCoin);
+        map.put("orderCoinType", CoinType.getCode(orderCoin));
+        map.put("unitCoinType", CoinType.getCode(unionCoin));
         map.put("orderCoinCnName", orderCoin);
         map.put("orderCoinName", orderCoin);
         map.put("unitCoinName", unionCoin );
@@ -118,7 +118,7 @@ public class OKCoinServiceImpl implements WebSocketService {
             map.put("rate", "0");
             map.put("price", info.get(0));
             map.put("remain", info.get(1));
-            map.put("num", i + 1);
+            map.put("num", bidsArray.size() - i);
             sales.add(map);
         }
         JSONArray asksArray = okResult.getJSONArray("asks");
