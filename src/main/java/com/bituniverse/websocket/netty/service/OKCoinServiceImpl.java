@@ -70,6 +70,8 @@ public class OKCoinServiceImpl implements WebSocketService {
      */
     private void tradeChannel(JSONArray data) throws ParseException {
         Map<String, Object> map = new HashMap<>();
+        Map<String, Object> records = new HashMap<>();
+        Map<String, Object> market = new HashMap<>();
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
         SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         JSONObject jsonObject = data.getJSONObject(0);
@@ -81,6 +83,11 @@ public class OKCoinServiceImpl implements WebSocketService {
         map.put("amount", amount.setScale(6, BigDecimal.ROUND_HALF_UP).stripTrailingZeros().toPlainString());
         map.put("createTime", createTime);
         map.put("orderType", orderType);
+        market.put("newPrice", price);
+        market.put("newPriceCNY", price.multiply(new BigDecimal(7.04)).setScale(2, BigDecimal.ROUND_HALF_UP));
+        records.put("records", map);
+        records.put("market", market);
+        records.put("kline", "");
 
         //币种
         String instrument = jsonObject.getString("instrument_id");
@@ -91,7 +98,7 @@ public class OKCoinServiceImpl implements WebSocketService {
         broadcastData.put("c2", CoinType.getCode(orderCoin));
         broadcastData.put("scene", EnumScene.SCENE_KLINE_YIBI.getScene());
         broadcastData.put("gear", 0);
-        broadcastData.put("info", map);
+        broadcastData.put("info", records);
         JSONObject broadcast = new JSONObject();
         broadcast.put("data", broadcastData);
         broadcast.put("action", "okBroadcast");
