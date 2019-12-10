@@ -77,7 +77,7 @@ public class OKCoinServiceImpl implements WebSocketService {
         BigDecimal amount = new BigDecimal(jsonObject.getString("size"));
         String createTime = sdf2.format(sdf1.parse(jsonObject.getString("timestamp")));
         Integer orderType = "buy".equals(jsonObject.getString("side")) ? 0 : 1;
-        map.put("price", price.setScale(2, BigDecimal.ROUND_HALF_UP).stripTrailingZeros().toPlainString());
+        map.put("price", price.setScale(4, BigDecimal.ROUND_HALF_UP).stripTrailingZeros().toPlainString());
         map.put("amount", amount.setScale(6, BigDecimal.ROUND_HALF_UP).stripTrailingZeros().toPlainString());
         map.put("createTime", createTime);
         map.put("orderType", orderType);
@@ -108,14 +108,14 @@ public class OKCoinServiceImpl implements WebSocketService {
     private void tikerChannel(JSONArray data) {
         Map<String, Object> map = new HashMap<>();
         JSONObject jsonObject = data.getJSONObject(0);
-        BigDecimal price = new BigDecimal(jsonObject.getString("last")).setScale(2, BigDecimal.ROUND_HALF_UP);
-        BigDecimal cnyPrice = price.multiply(new BigDecimal(7.1)).setScale(2, BigDecimal.ROUND_HALF_UP);
+        BigDecimal price = new BigDecimal(jsonObject.getString("last")).setScale(4, BigDecimal.ROUND_HALF_UP);
+        BigDecimal cnyPrice = price.multiply(new BigDecimal(7.1)).setScale(3, BigDecimal.ROUND_HALF_UP);
         BigDecimal vol = new BigDecimal(jsonObject.getString("quote_volume_24h")).setScale(0, BigDecimal.ROUND_HALF_UP);
         BigDecimal percentage = new BigDecimal(jsonObject.getString("open_24h")).subtract(price).divide(new BigDecimal(jsonObject.getString("open_24h")), 2, BigDecimal.ROUND_HALF_UP);
         //usdt价格
-        map.put("newPrice", price.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString());
+        map.put("newPrice", price.setScale(4, BigDecimal.ROUND_HALF_UP).toPlainString());
         //cny价格
-        map.put("newPriceCNY", cnyPrice.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString());
+        map.put("newPriceCNY", cnyPrice.setScale(3, BigDecimal.ROUND_HALF_UP).toPlainString());
         //交易量
         map.put("sumAmount", vol.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString());
         //百分比
@@ -129,8 +129,8 @@ public class OKCoinServiceImpl implements WebSocketService {
         map.put("orderCoinCnName", orderCoin);
         map.put("orderCoinName", orderCoin);
         map.put("unitCoinName", unionCoin );
-        map.put("high", new BigDecimal(jsonObject.getString("high_24h")).setScale(2, BigDecimal.ROUND_HALF_UP));
-        map.put("low", new BigDecimal(jsonObject.getString("low_24h")).setScale(2, BigDecimal.ROUND_HALF_UP));
+        map.put("high", new BigDecimal(jsonObject.getString("high_24h")).setScale(4, BigDecimal.ROUND_HALF_UP));
+        map.put("low", new BigDecimal(jsonObject.getString("low_24h")).setScale(4, BigDecimal.ROUND_HALF_UP));
         JSONObject broadcastData = new JSONObject();
         broadcastData.put("c1", CoinType.getCode(unionCoin));
         broadcastData.put("c2", CoinType.getCode(orderCoin));
