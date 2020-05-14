@@ -34,7 +34,9 @@ public class OkCoinStart {
         client.sendText("{\"op\": \"subscribe\", \"args\": [\"spot/depth5:LTC-USDT\"]}");
         client.sendText("{\"op\": \"subscribe\", \"args\": [\"spot/depth5:XRP-USDT\"]}");
         client.sendText("{\"op\": \"subscribe\", \"args\": [\"spot/depth5:EOS-USDT\"]}");
-//        client.sendText("{\"op\": \"subscribe\", \"args\": [\"spot/depth5:DOGE-USDT\"]}");
+        client.sendText("{\"op\": \"subscribe\", \"args\": [\"spot/depth5:DOGE-USDT\"]}");
+        client.sendText("{\"op\": \"subscribe\", \"args\": [\"spot/depth5:KCASH-USDT\"]}");
+        client.sendText("{\"op\": \"subscribe\", \"args\": [\"spot/depth5:DGB-USDT\"]}");
 
         //tiker信息
         client.sendText("{\"op\": \"subscribe\", \"args\": [\"spot/ticker:BTC-USDT\"]}");
@@ -42,7 +44,9 @@ public class OkCoinStart {
         client.sendText("{\"op\": \"subscribe\", \"args\": [\"spot/ticker:LTC-USDT\"]}");
         client.sendText("{\"op\": \"subscribe\", \"args\": [\"spot/ticker:EOS-USDT\"]}");
         client.sendText("{\"op\": \"subscribe\", \"args\": [\"spot/ticker:XRP-USDT\"]}");
-//        client.sendText("{\"op\": \"subscribe\", \"args\": [\"spot/ticker:DOGE-USDT\"]}");
+        client.sendText("{\"op\": \"subscribe\", \"args\": [\"spot/ticker:DOGE-USDT\"]}");
+        client.sendText("{\"op\": \"subscribe\", \"args\": [\"spot/ticker:KCASH-USDT\"]}");
+        client.sendText("{\"op\": \"subscribe\", \"args\": [\"spot/ticker:DGB-USDT\"]}");
 
         //成交信息
         client.sendText("{\"op\": \"subscribe\", \"args\": [\"spot/trade:BTC-USDT\"]}");
@@ -50,7 +54,9 @@ public class OkCoinStart {
         client.sendText("{\"op\": \"subscribe\", \"args\": [\"spot/trade:LTC-USDT\"]}");
         client.sendText("{\"op\": \"subscribe\", \"args\": [\"spot/trade:EOS-USDT\"]}");
         client.sendText("{\"op\": \"subscribe\", \"args\": [\"spot/trade:XRP-USDT\"]}");
-//        client.sendText("{\"op\": \"subscribe\", \"args\": [\"spot/trade:DOGE-USDT\"]}");
+        client.sendText("{\"op\": \"subscribe\", \"args\": [\"spot/trade:DOGE-USDT\"]}");
+        client.sendText("{\"op\": \"subscribe\", \"args\": [\"spot/trade:KCASH-USDT\"]}");
+        client.sendText("{\"op\": \"subscribe\", \"args\": [\"spot/trade:DGB-USDT\"]}");
 
         /*JSONObject jsonObject = new JSONObject();
         JSONArray jsonArray = new JSONArray();

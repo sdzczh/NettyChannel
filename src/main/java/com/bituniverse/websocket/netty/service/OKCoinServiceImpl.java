@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.bituniverse.websocket.Constants;
 import com.bituniverse.websocket.enums.EnumScene;
+import com.bituniverse.websocket.exchange.start.OkCoinStart;
 import com.bituniverse.websocket.service.*;
 import com.bituniverse.websocket.utils.*;
 import com.bituniverse.websocket.netty.WebSocketService;
@@ -45,6 +46,9 @@ public class OKCoinServiceImpl implements WebSocketService {
                 log.info("收到okcoin服务器数据jsonObject：" + ((JSONObject)json).toJSONString());
             }
             JSONObject jsonObject = JSONObject.parseObject(msg);
+            if("error".equals(jsonObject.getString("event"))){
+                OkCoinStart.start();
+            }
             String table = jsonObject.getString("table");
             JSONArray data = jsonObject.getJSONArray("data");
             //深度交易挂单订阅
