@@ -46,9 +46,9 @@ public class OKCoinServiceImpl implements WebSocketService {
                 log.info("收到okcoin服务器数据jsonObject：" + ((JSONObject)json).toJSONString());
             }
             JSONObject jsonObject = JSONObject.parseObject(msg);
-            if("error".equals(jsonObject.getString("event"))){
+           /* if("error".equals(jsonObject.getString("event"))){
                 OkCoinStart.start();
-            }
+            }*/
             String table = jsonObject.getString("table");
             JSONArray data = jsonObject.getJSONArray("data");
             //深度交易挂单订阅
