@@ -26,7 +26,6 @@ public class OkCoinStart {
             client.start();
         } catch (Exception e) {
             e.printStackTrace();
-            client.start();
         }
         //订阅最新价格
         client.sendText("{\"op\": \"subscribe\", \"args\": [\"spot/depth5:BTC-USDT\"]}");
